@@ -4,7 +4,16 @@ import router from './router'
 import './assets/styles.css'
 import { store } from './composables/useQuizStore'
 
-// Инициализация данных при старте
-store.init()
+const app = createApp(App)
 
-createApp(App).use(router).mount('#app')
+// Инициализируем стор ПЕРЕД монтированием
+async function bootstrap() {
+  try {
+    await store.init()
+  } catch (e) {
+    console.error('Failed to load data:', e)
+  }
+  app.use(router).mount('#app')
+}
+
+bootstrap()

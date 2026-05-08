@@ -18,7 +18,7 @@
     </div>
 
     <div class="results-actions">
-      <button class="btn-retry" @click="$router.push(`/quiz/${data.quizId}`)">🔄 Пройти снова</button>
+      <button class="btn-retry" @click="retryQuiz">🔄 Пройти снова</button>
       <button class="btn-home" @click="$router.push('/')">🏠 На главную</button>
     </div>
   </div>
@@ -26,10 +26,16 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 
-const data = computed(() => store.lastResult || { correct: 0, total: 1, time: 0, emoji: '🏆', quizId: '' })
-const pct = computed(() => Math.round((data.value.correct / data.value.total) * 100))
+const router = useRouter()
+
+const data = computed(() => store.lastResult || { correct: 0, total: 1, time: 0, emoji: '🏆', quiz_id: '' })
+const pct = computed(() => {
+  if (!data.value.total) return 0
+  return Math.round((data.value.correct / data.value.total) * 100)
+})
 
 const title = computed(() => {
   if (pct.value === 100) return 'Идеально!'
@@ -45,6 +51,12 @@ const subtitle = computed(() => {
   if (pct.value >= 40) return 'Попробуй ещё раз!'
   return 'Практика делает мастера!'
 })
+
+const retryQuiz = () => {
+  const quizId = data.value.quiz_id || data.value.quizId
+  if (quizId) router.push(`/quiz/${quizId}`)
+  else router.push('/')
+}
 
 function launchConfetti() {
   if (pct.value < 70) return

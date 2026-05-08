@@ -12,9 +12,9 @@
       </div>
     </div>
     <div class="meta">
-      <span class="difficulty" :class="quiz.difficulty">{{ diffLabels[quiz.difficulty] }}</span>
-      <span>📝 {{ quiz.questions.length }} вопросов</span>
-      <span>⏱ {{ quiz.timePerQuestion }}с</span>
+      <span class="difficulty" :class="quiz.difficulty">{{ getDifficultyLabel(quiz.difficulty) }}</span>
+      <span>📝 {{ quiz.questions?.length || 0 }} вопросов</span>
+      <span>⏱ {{ getTimePerQuestion(quiz) }}с</span>
     </div>
   </div>
 </template>
@@ -22,18 +22,47 @@
 <script setup>
 import { defineProps } from 'vue'
 import { useRouter } from 'vue-router'
-import { store, diffLabels } from '../composables/useQuizStore'
+import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
 
-const props = defineProps({ quiz: Object, isCustom: Boolean })
+const DIFFICULTY_LABELS = {
+  easy: 'Лёгкий',
+  medium: 'Средний',
+  hard: 'Сложный'
+}
+
+const props = defineProps({ 
+  quiz: Object, 
+  isCustom: Boolean 
+})
+
 const router = useRouter()
 
-const startQuiz = () => router.push({ name: 'TakeQuiz', params: { id: props.quiz.id } })
-const editQuiz = () => router.push({ name: 'EditQuiz', params: { id: props.quiz.id } })
-const deleteQuiz = () => {
+function getDifficultyLabel(difficulty) {
+  return DIFFICULTY_LABELS[difficulty] || difficulty
+}
+
+function getTimePerQuestion(quiz) {
+  return quiz.timePerQuestion || quiz.time_per_question || 30
+}
+
+const startQuiz = () => {
+  router.push({ name: 'TakeQuiz', params: { id: props.quiz.id } })
+}
+
+const editQuiz = () => {
+  router.push({ name: 'EditQuiz', params: { id: props.quiz.id } })
+}
+
+const deleteQuiz = async () => {
   if (confirm(`Удалить квиз "${props.quiz.title}"?`)) {
-    store.deleteCustomQuiz(props.quiz.id)
-    showToast('Квиз удалён', 'error')
+    try {
+      await store.deleteCustomQuiz(props.quiz.id)
+      showToast('Квиз удалён', 'error')
+    } catch (e) {
+      console.error('Delete failed:', e)
+      showToast('Ошибка при удалении', 'error')
+    }
   }
 }
 </script>

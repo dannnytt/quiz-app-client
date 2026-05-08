@@ -22,7 +22,9 @@
         <div class="form-group">
           <label>Сложность</label>
           <select v-model="form.difficulty">
-            <option value="easy">Лёгкий</option><option value="medium" selected>Средний</option><option value="hard">Сложный</option>
+            <option value="easy">Лёгкий</option>
+            <option value="medium" selected>Средний</option>
+            <option value="hard">Сложный</option>
           </select>
         </div>
         <div class="form-group"><label>Время (сек)</label><input v-model.number="form.timePerQuestion" type="number" min="10" max="120" required></div>
@@ -57,8 +59,15 @@
 <script setup>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { store, diffLabels } from '../composables/useQuizStore'
+import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
+
+// ✅ Локальная константа вместо импорта из стора
+const DIFFICULTY_LABELS = {
+  easy: 'Лёгкий',
+  medium: 'Средний',
+  hard: 'Сложный'
+}
 
 const router = useRouter()
 const form = reactive({
@@ -73,8 +82,12 @@ function createEmptyQuestion() {
 const addQuestion = () => form.questions.push(createEmptyQuestion())
 const removeQuestion = (idx) => form.questions.splice(idx, 1)
 
-function saveQuiz() {
-  const valid = form.questions.every(q => q.text && q.options.every(o => o) && q.correct >= 0)
+async function saveQuiz() {
+  const valid = form.questions.every(q => 
+    q.text?.trim() && 
+    q.options.every(o => o?.trim()) && 
+    q.correct >= 0
+  )
   if (!valid) return showToast('Заполните все поля и отметьте правильный ответ', 'error')
 
   const quiz = {
@@ -83,17 +96,24 @@ function saveQuiz() {
     title: form.title.trim(),
     desc: form.desc.trim(),
     difficulty: form.difficulty,
-    difficultyLabel: diffLabels[form.difficulty],
-    timePerQuestion: form.timePerQuestion,
+    // ✅ Бэкенд не требует difficultyLabel, можно не отправлять
+    time_per_question: form.timePerQuestion, // ✅ Правильное имя поля для бэкенда
     isCustom: true,
     questions: form.questions.map(q => ({
-      q: q.text, options: q.options, correct: q.correct,
-      explanation: q.explanation || `Правильный ответ: ${q.options[q.correct]}`
+      text: q.text.trim(),    // ✅ text, а не q
+      options: q.options.map(o => o.trim()),
+      correct: q.correct,
+      explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`
     }))
   }
 
-  store.addCustomQuiz(quiz)
-  showToast(`Квиз "${quiz.title}" сохранён! ✨`, 'success')
-  router.push('/')
+  try {
+    await store.addCustomQuiz(quiz)
+    showToast(`Квиз "${quiz.title}" сохранён! ✨`, 'success')
+    router.push('/')
+  } catch (e) {
+    console.error('Save failed:', e)
+    showToast('Ошибка при сохранении', 'error')
+  }
 }
 </script>

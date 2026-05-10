@@ -16,5 +16,37 @@ export const api = {
   deleteQuiz: (id) => request(`/api/quizzes/${id}`, { method: 'DELETE' }),
   saveResult: (data) => request('/api/results', { method: 'POST', body: JSON.stringify(data) }),
   getResults: () => request('/api/results'),
-  clearResults: () => request('/api/results', { method: 'DELETE' })
+  clearResults: () => request('/api/results', { method: 'DELETE' }),
+
+  createSession: (quizId) => request('/api/sessions', { 
+    method: 'POST', 
+    body: JSON.stringify({ quiz_id: quizId }) 
+  }),
+  
+  joinSession: (hostCode, nickname) => request('/api/sessions/join', {
+    method: 'POST',
+    body: JSON.stringify({ host_code: hostCode, nickname })
+  }),
+  
+  getSessionState: (sessionId) => request(`/api/sessions/${sessionId}`),
+  
+  startSession: (sessionId) => request(`/api/sessions/${sessionId}/start`, { method: 'POST' }),
+  
+  nextQuestion: (sessionId) => request(`/api/sessions/${sessionId}/next`, { method: 'POST' }),
+  
+  submitAnswer: (sessionId, playerToken, questionIndex, selectedOption) => 
+    request(`/api/sessions/${sessionId}/answers`, {
+      method: 'POST',
+      body: JSON.stringify({ 
+        player_token: playerToken, 
+        question_index: questionIndex, 
+        selected_option: selectedOption 
+      })
+    }),
+  
+  finishSession: (sessionId) => request(`/api/sessions/${sessionId}/finish`, { method: 'POST' }),
+  
+  getLeaderboard: (sessionId) => request(`/api/sessions/${sessionId}/leaderboard`),
+  
+  getSessionPlayers: (sessionId) => request(`/api/sessions/${sessionId}/players`)
 }

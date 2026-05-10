@@ -6,6 +6,7 @@
     <div class="home-actions">
       <button class="action-btn create-btn" @click="$router.push('/create')">✨ Создать квиз</button>
       <button class="action-btn stats-btn" @click="$router.push('/history')">📊 Мои результаты</button>
+      <button class="action-btn join-btn" @click="$router.push('/join')">🔗 Присоединиться по коду</button>
     </div>
 
     <div class="section-title">Готовые квизы</div>

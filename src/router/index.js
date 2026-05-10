@@ -8,7 +8,6 @@ const routes = [
   { path: '/edit/:id', name: 'EditQuiz', component: () => import('../views/EditQuizView.vue') },
   { path: '/quiz/:id', name: 'TakeQuiz', component: () => import('../views/QuizView.vue') },
   { path: '/results', name: 'Results', component: () => import('../views/ResultsView.vue') },
-  { path: '/history', name: 'History', component: () => import('../views/HistoryView.vue') },
   
   // ✅ Мультиплеерные маршруты
   { path: '/session/create/:id', name: 'CreateSession', component: () => import('../views/CreateSessionView.vue') },

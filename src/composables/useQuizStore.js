@@ -3,8 +3,6 @@ import { api } from '../api'
 
 export const store = reactive({
   quizzes: [],
-  results: [],
-  lastResult: null,
   loading: false,
   error: null,
 
@@ -12,8 +10,7 @@ export const store = reactive({
     this.loading = true
     this.error = null
     try {
-      const [quizzes, results] = await Promise.all([api.getQuizzes(), api.getResults()])
-      
+      const quizzes = await api.getQuizzes()
       this.quizzes = quizzes.map(q => ({
         id: q.id,
         title: q.title,
@@ -31,19 +28,7 @@ export const store = reactive({
         }))
       }))
 
-      this.results = (results || []).map(r => ({
-        id: r.id,
-        quizName: r.quiz_name || r.quizName,
-        quizId: r.quiz_id || r.quizId,
-        emoji: r.emoji,
-        correct: r.correct ?? 0,
-        total: r.total ?? 1,
-        score: r.score ?? 0,
-        time: r.time ?? 0,
-        created_at: r.created_at || r.date
-      }))
       
-      this.results = results || []
     } catch (e) {
       console.error('Store init error:', e)
       this.error = e.message || 'Не удалось загрузить данные'
@@ -100,11 +85,6 @@ export const store = reactive({
     this.results.unshift(saved)
   },
 
-  async clearResults() {
-    await api.clearResults()
-    this.results = []
-    this.lastResult = null
-  },
 
   getQuiz(id) {
     return this.quizzes.find(q => q.id === id)

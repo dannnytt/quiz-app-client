@@ -15,8 +15,6 @@ export const api = {
   updateQuiz: (id, data) => request(`/api/quizzes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteQuiz: (id) => request(`/api/quizzes/${id}`, { method: 'DELETE' }),
   saveResult: (data) => request('/api/results', { method: 'POST', body: JSON.stringify(data) }),
-  getResults: () => request('/api/results'),
-  clearResults: () => request('/api/results', { method: 'DELETE' }),
 
   createSession: (quizId) => request('/api/sessions', { 
     method: 'POST', 

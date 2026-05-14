@@ -15,6 +15,11 @@ const routes = [
   { path: '/session/:sessionId', name: 'SessionLobby', component: () => import('../views/SessionLobbyView.vue') }, // ← Этот файл теперь есть
   { path: '/session/:sessionId/play', name: 'MultiplayerQuiz', component: () => import('../views/MultiplayerQuizView.vue') },
   { path: '/session/:sessionId/results', name: 'SessionResults', component: () => import('../views/SessionResultsView.vue') },
+  { 
+    path: '/quiz/:quizId/analytics', 
+    name: 'QuizAnalytics', 
+    component: () => import('../views/QuizAnalyticsView.vue') 
+  },
 ]
 
 const router = createRouter({

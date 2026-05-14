@@ -47,5 +47,6 @@ export const api = {
   
   getLeaderboard: (sessionId) => request(`/api/sessions/${sessionId}/leaderboard`),
   
-  getSessionPlayers: (sessionId) => request(`/api/sessions/${sessionId}/players`)
+  getSessionPlayers: (sessionId) => request(`/api/sessions/${sessionId}/players`),
+  getQuizAnalytics: (quizId) => request(`/api/quizzes/${quizId}/analytics`)
 }

@@ -2,6 +2,7 @@
   <div :class="['quiz-card', { 'my-quiz': isCustom }]" @click="startQuiz">
     <!-- Кнопки действий для кастомных квизов -->
     <div class="card-actions" v-if="isCustom" @click.stop>
+      <button @click="viewAnalytics" title="Аналитика">📊</button>
       <button @click="editQuiz" title="Редактировать">✏️</button>
       <button class="delete-btn" @click="deleteQuiz" title="Удалить">🗑️</button>
       <button @click="createOnlineSession" title="Онлайн-игра">🌐</button>
@@ -9,6 +10,7 @@
     
     <!-- Кнопка онлайн-сессии для дефолтных квизов -->
     <div class="card-actions" v-else @click.stop>
+      <button @click="viewAnalytics" title="Аналитика">📊</button>
       <button @click="createOnlineSession" title="Онлайн-игра">🌐</button>
     </div>
     
@@ -38,6 +40,11 @@ const DIFFICULTY_LABELS = {
   easy: 'Лёгкий',
   medium: 'Средний',
   hard: 'Сложный'
+}
+
+const viewAnalytics = (event) => {
+  if (event) event.stopPropagation()
+  router.push({ name: 'QuizAnalytics', params: { quizId: props.quiz.id } })
 }
 
 const props = defineProps({ 

@@ -294,14 +294,19 @@ function selectAnswer(index) {
 
 async function submitAnswerToServer(optionIndex) {
   try {
+    // ✅ Защита от отрицательного времени
+    const safeTimeLeft = Math.max(0, Math.min(timeLeft.value, quizTime.value))
+    
     await api.submitAnswer(
       sessionId.value,
       playerToken.value,
       currentQuestionIndex.value,
       optionIndex,
-      timeLeft.value
+      safeTimeLeft  // Отправляем только корректное значение
     )
-  } catch (e) { console.error('Submit answer failed:', e) }
+  } catch (e) { 
+    console.error('Submit answer failed:', e) 
+  }
 }
 
 async function nextQuestionHost() {

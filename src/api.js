@@ -32,13 +32,14 @@ export const api = {
   
   nextQuestion: (sessionId) => request(`/api/sessions/${sessionId}/next`, { method: 'POST' }),
   
-  submitAnswer: (sessionId, playerToken, questionIndex, selectedOption) => 
+  submitAnswer: (sessionId, playerToken, questionIndex, selectedOption, timeLeft) => 
     request(`/api/sessions/${sessionId}/answers`, {
       method: 'POST',
       body: JSON.stringify({ 
         player_token: playerToken, 
         question_index: questionIndex, 
-        selected_option: selectedOption 
+        selected_option: selectedOption,
+        time_left: timeLeft
       })
     }),
   

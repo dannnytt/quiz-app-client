@@ -285,12 +285,22 @@ function selectAnswer(index) {
   selected.value = index
   canAnswer.value = false
   stopQuestionTimer()
+  
+  const bonus = Math.round((timeLeft.value / quizTime.value) * 50)
+  showToast(`Ответ отправлен! +${100 + bonus} очков`, 'success')
+  
   submitAnswerToServer(index)
 }
 
 async function submitAnswerToServer(optionIndex) {
   try {
-    await api.submitAnswer(sessionId.value, playerToken.value, currentQuestionIndex.value, optionIndex)
+    await api.submitAnswer(
+      sessionId.value,
+      playerToken.value,
+      currentQuestionIndex.value,
+      optionIndex,
+      timeLeft.value
+    )
   } catch (e) { console.error('Submit answer failed:', e) }
 }
 

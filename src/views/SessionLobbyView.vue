@@ -378,11 +378,13 @@ onUnmounted(() => {
 .difficulty.hard { background: rgba(225,112,85,0.15); color: var(--danger); }
 
 /* Код сессии */
+/* Код сессии — исправлено для светлой темы */
 .session-code-card {
   text-align: center;
   margin-bottom: 24px;
   padding: 20px;
   background: rgba(108, 92, 231, 0.08);
+  border: 1px solid rgba(108, 92, 231, 0.2);
   border-radius: 16px;
 }
 
@@ -396,19 +398,24 @@ onUnmounted(() => {
   font-size: 2.5rem;
   font-weight: 900;
   letter-spacing: 6px;
-  color: #ffffff; /* ✅ Явный цвет текста */
+  /* ✅ Тёмный текст для светлой темы */
+  color: var(--dark, #2d3436) !important;
+  -webkit-text-fill-color: var(--dark, #2d3436) !important;
+  
   padding: 20px;
-  background: rgba(108, 92, 231, 0.15);
-  border: 1px solid rgba(108, 92, 231, 0.3);
+  /* ✅ Чуть более светлый фон для контраста */
+  background: rgba(108, 92, 231, 0.08);
+  border: 2px solid rgba(108, 92, 231, 0.3);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
-  user-select: all; /* ✅ Упрощает выделение/копирование */
+  user-select: all;
 }
 
 .code-display:hover {
-  background: rgba(108, 92, 231, 0.25);
+  background: rgba(108, 92, 231, 0.12);
+  border-color: var(--primary);
   transform: scale(1.02);
 }
 

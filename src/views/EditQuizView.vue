@@ -342,7 +342,7 @@ onMounted(loadQuiz)
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(108, 92, 231, 0.2);
+  border: 3px solid var(--border);
   border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -353,13 +353,14 @@ onMounted(loadQuiz)
   to { transform: rotate(360deg); }
 }
 
-/* Стили формы */
+/* Стили формы — светлая тема */
 .form-section {
   background: var(--card-bg);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .form-section h3 {
@@ -369,6 +370,7 @@ onMounted(loadQuiz)
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--dark);
 }
 
 .form-group {
@@ -384,15 +386,17 @@ onMounted(loadQuiz)
   margin-bottom: 6px;
 }
 
+/* ✅ Поля ввода — светлая тема */
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--input-bg, #f8f9fa);
+  border: 1px solid var(--input-border, #dee2e6);
   border-radius: 12px;
-  color: #fff;
+  color: var(--dark, #2d3436) !important;
+  -webkit-text-fill-color: var(--dark, #2d3436) !important;
   font-size: 0.95rem;
   font-family: 'Inter', sans-serif;
   transition: all 0.2s;
@@ -403,7 +407,19 @@ onMounted(loadQuiz)
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+  background: #fff;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--input-placeholder, #adb5bd) !important;
+  opacity: 1 !important;
+}
+
+.form-group select option {
+  background: var(--card-bg);
+  color: var(--dark);
 }
 
 .form-row {
@@ -412,10 +428,10 @@ onMounted(loadQuiz)
   gap: 12px;
 }
 
-/* Редактор вопроса */
+/* Редактор вопроса — светлая тема */
 .question-editor {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 16px;
@@ -445,7 +461,7 @@ onMounted(loadQuiz)
 }
 
 .q-remove:hover {
-  background: rgba(225, 112, 85, 0.15);
+  background: rgba(225, 112, 85, 0.1);
 }
 
 .option-editor {
@@ -459,20 +475,45 @@ onMounted(loadQuiz)
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.08);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 0.8rem;
   flex-shrink: 0;
+  color: var(--dark);
+}
+
+.option-editor input {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  color: var(--dark) !important;
+  -webkit-text-fill-color: var(--dark) !important;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.option-editor input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.option-editor input::placeholder {
+  color: var(--input-placeholder) !important;
+  opacity: 1 !important;
 }
 
 .correct-check {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  border: 2px solid rgba(255,255,255,0.15);
+  border: 2px solid var(--input-border);
   background: transparent;
   cursor: pointer;
   display: flex;
@@ -486,19 +527,51 @@ onMounted(loadQuiz)
 
 .correct-check.active {
   border-color: var(--success);
-  background: rgba(0, 184, 148, 0.2);
-  color: var(--success);
+  background: rgba(0, 184, 148, 0.1);
+  color: var(--success) !important;
+  -webkit-text-fill-color: var(--success) !important;
+}
+
+.explanation-input {
+  margin-top: 10px;
 }
 
 .explanation-input textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  color: var(--dark) !important;
+  -webkit-text-fill-color: var(--dark) !important;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
   resize: vertical;
-  min-height: 50px;
+  min-height: 60px;
+}
+
+.explanation-input textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.explanation-input textarea::placeholder {
+  color: var(--input-placeholder) !important;
+  opacity: 1 !important;
+}
+
+.explanation-input label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gray);
+  margin-bottom: 6px;
 }
 
 .add-question-btn {
   width: 100%;
   padding: 14px;
-  background: rgba(108, 92, 231, 0.1);
+  background: rgba(108, 92, 231, 0.05);
   border: 2px dashed rgba(108, 92, 231, 0.3);
   border-radius: 14px;
   color: var(--primary);
@@ -509,7 +582,7 @@ onMounted(loadQuiz)
 }
 
 .add-question-btn:hover {
-  background: rgba(108, 92, 231, 0.15);
+  background: rgba(108, 92, 231, 0.1);
   border-color: var(--primary);
 }
 
@@ -533,12 +606,14 @@ onMounted(loadQuiz)
 }
 
 .btn-cancel {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
+  background: var(--card-bg);
+  color: var(--dark);
+  border: 1px solid var(--border);
 }
 
 .btn-cancel:hover {
-  background: rgba(255,255,255,0.15);
+  background: var(--card-bg2);
+  border-color: var(--danger);
 }
 
 .btn-save {
@@ -547,7 +622,7 @@ onMounted(loadQuiz)
 }
 
 .btn-save:hover:not(:disabled) {
-  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
   transform: translateY(-2px);
 }
 
@@ -565,5 +640,17 @@ onMounted(loadQuiz)
   .form-actions {
     flex-direction: column;
   }
+}
+
+/* ✅ Исправление автозаполнения браузера */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus,
+.option-editor input:-webkit-autofill,
+.explanation-input textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--dark, #2d3436) !important;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 </style>

@@ -86,28 +86,113 @@ async function joinSession() {
 </script>
 
 <style scoped>
-/* ... ваши стили без изменений ... */
-.join-container { max-width: 400px; margin: 0 auto; padding: 20px; }
-.join-form { background: var(--card-bg); border-radius: 20px; padding: 30px; margin-top: 30px; }
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--gray); }
+.join-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.join-form {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 30px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--gray);
+}
+
+/* ✅ ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ПОЛЕЙ ВВОДА */
 .form-group input {
-  width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.05);
-  border: 2px solid rgba(255,255,255,0.1); border-radius: 12px;
-  color: #fff; font-size: 1rem; font-family: 'Inter', sans-serif;
-  transition: border-color 0.2s;
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--input-bg, #f8f9fa);
+  border: 2px solid var(--input-border, #dee2e6);
+  border-radius: 12px;
+  color: var(--dark, #2d3436) !important;           /* ✅ Тёмный текст */
+  -webkit-text-fill-color: var(--dark, #2d3436) !important; /* ✅ Для Safari */
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.form-group input:focus { outline: none; border-color: var(--primary); }
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+  background: #fff;
+}
+
+.form-group input::placeholder {
+  color: var(--input-placeholder, #adb5bd) !important;
+  opacity: 1 !important;
+}
+
+/* ✅ Особые стили для поля кода */
 .code-input {
-  text-transform: uppercase; letter-spacing: 4px; text-align: center;
-  font-size: 1.5rem; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark, #2d3436) !important;
+  background: var(--input-bg, #f8f9fa) !important;
+  border-color: var(--input-border, #dee2e6) !important;
 }
+
+.code-input:focus {
+  background: #fff !important;
+  border-color: var(--primary) !important;
+}
+
+/* ✅ Исправление автозаполнения браузера */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--dark, #2d3436) !important;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .btn-join {
-  width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--accent));
-  border: none; border-radius: 14px; color: #fff; font-size: 1.1rem;
-  font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 10px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
 }
-.btn-join:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3); }
-.btn-join:disabled { opacity: 0.6; cursor: not-allowed; }
-.error { margin-top: 20px; text-align: center; color: var(--danger); font-weight: 500; }
+
+.btn-join:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
+}
+
+.btn-join:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--danger);
+  font-weight: 500;
+}
 </style>

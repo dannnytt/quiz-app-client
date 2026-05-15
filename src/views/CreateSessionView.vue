@@ -162,7 +162,7 @@ onUnmounted(() => {
 .session-code { margin: 30px 0; }
 .code-display {
   font-size: 3rem; font-weight: 900; letter-spacing: 8px;
-  color: #ffffff; padding: 24px; background: rgba(108, 92, 231, 0.15);
+  color: #2d3436; padding: 24px; background: rgba(108, 92, 231, 0.15);
   border: 1px solid rgba(108, 92, 231, 0.3); border-radius: 20px;
   margin-bottom: 10px; cursor: pointer; transition: all 0.2s; user-select: all;
 }

@@ -292,6 +292,7 @@ function exportData() {
 
 onMounted(loadAnalytics)
 </script>
+
 <style scoped>
 .analytics-container {
   max-width: 1200px;
@@ -311,20 +312,21 @@ onMounted(loadAnalytics)
 .analytics-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
+  color: var(--dark);
 }
 
 .btn-export {
   padding: 10px 20px;
-  background: rgba(0, 184, 148, 0.15);
+  background: rgba(0, 184, 148, 0.12);
   border: 1px solid var(--success);
   border-radius: 10px;
-  color: var(--success);
+  color: #00896b;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 .btn-export:hover {
-  background: rgba(0, 184, 148, 0.25);
+  background: rgba(0, 184, 148, 0.2);
 }
 
 .analytics-loading,
@@ -338,7 +340,7 @@ onMounted(loadAnalytics)
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(108, 92, 231, 0.2);
+  border: 3px solid var(--border);
   border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -359,7 +361,8 @@ onMounted(loadAnalytics)
   border-radius: 16px;
   padding: 20px;
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
 .metric-value {
@@ -376,20 +379,25 @@ onMounted(loadAnalytics)
 
 /* Самый сложный вопрос */
 .hardest-question {
-  background: rgba(225, 112, 85, 0.1);
-  border: 1px solid var(--danger);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .hardest-question h3 {
   margin-bottom: 16px;
-  color: var(--danger);
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .question-card {
-  background: rgba(255,255,255,0.03);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
 }
@@ -398,6 +406,7 @@ onMounted(loadAnalytics)
   font-weight: 600;
   margin-bottom: 12px;
   line-height: 1.4;
+  color: var(--dark);
 }
 
 .question-stats {
@@ -417,13 +426,14 @@ onMounted(loadAnalytics)
 .option-bar {
   height: 28px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.1);
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   padding: 0 12px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--dark);
   transition: width 0.3s ease;
   white-space: nowrap;
   overflow: hidden;
@@ -431,10 +441,13 @@ onMounted(loadAnalytics)
 
 .option-bar.is-correct {
   background: linear-gradient(90deg, var(--success), #00a388);
+  color: #fff !important;
+  border-color: transparent;
 }
 
 .option-bar.most-wrong {
   background: linear-gradient(90deg, var(--danger), #d65c4a);
+  color: #fff !important;
   border: 2px solid rgba(255,255,255,0.3);
 }
 
@@ -450,32 +463,41 @@ onMounted(loadAnalytics)
   background: var(--card-bg);
   border-radius: 16px;
   padding: 20px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   
   /* ✅ Ключевые свойства для Chart.js */
   position: relative;
-  height: 300px; /* Фиксированная высота для стабильности */
+  height: 300px;
   min-height: 250px;
 }
 
-/* Обёртка для самого canvas (опционально, но надёжно) */
+.chart-card h4 {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  color: var(--dark);
+}
+
 .chart-card :deep(canvas) {
   width: 100% !important;
   height: 100% !important;
   max-height: 100%;
 }
+
 /* Таблица */
 .questions-table {
   background: var(--card-bg);
   border-radius: 16px;
   padding: 20px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   overflow-x: auto;
 }
 
 .questions-table h4 {
   margin-bottom: 16px;
   font-size: 1.1rem;
+  color: var(--dark);
 }
 
 table {
@@ -488,12 +510,13 @@ th {
   padding: 12px 16px;
   font-weight: 600;
   color: var(--gray);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border);
 }
 
 td {
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+  color: var(--dark);
 }
 
 .question-cell {
@@ -501,6 +524,7 @@ td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--dark);
 }
 
 .accuracy-badge {
@@ -509,9 +533,18 @@ td {
   font-size: 0.8rem;
   font-weight: 600;
 }
-.accuracy-badge.high { background: rgba(0, 184, 148, 0.15); color: var(--success); }
-.accuracy-badge.medium { background: rgba(253, 203, 110, 0.15); color: var(--warning); }
-.accuracy-badge.low { background: rgba(225, 112, 85, 0.15); color: var(--danger); }
+.accuracy-badge.high { 
+  background: rgba(0, 184, 148, 0.12); 
+  color: #00896b; 
+}
+.accuracy-badge.medium { 
+  background: rgba(253, 203, 110, 0.15); 
+  color: #d49e00; 
+}
+.accuracy-badge.low { 
+  background: rgba(225, 112, 85, 0.12); 
+  color: #c05030; 
+}
 
 /* Адаптив */
 @media (max-width: 768px) {

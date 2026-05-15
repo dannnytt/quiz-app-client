@@ -38,11 +38,6 @@
         
         <div class="form-row">
           <div class="form-group">
-            <label>Эмодзи</label>
-            <input v-model="form.emoji" maxlength="6" placeholder="📝">
-          </div>
-          
-          <div class="form-group">
             <label>Сложность</label>
             <select v-model="form.difficulty">
               <option value="easy">Лёгкий</option>
@@ -146,7 +141,6 @@ const form = reactive({
   id: '',
   title: '',
   desc: '',
-  emoji: '📝',
   difficulty: 'medium',
   timePerQuestion: 30,
   questions: []
@@ -292,7 +286,6 @@ async function updateQuiz() {
       id: form.id,
       title: form.title.trim(),
       desc: form.desc.trim(),
-      emoji: form.emoji || '📝',
       difficulty: form.difficulty,
       time_per_question: form.timePerQuestion,  // ✅ snake_case для бэкенда
       isCustom: true,

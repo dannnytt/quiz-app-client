@@ -18,7 +18,6 @@
         <input v-model="form.desc" required maxlength="100" placeholder="Краткое описание">
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Эмодзи</label><input v-model="form.emoji" maxlength="4" value="📝"></div>
         <div class="form-group">
           <label>Сложность</label>
           <select v-model="form.difficulty">
@@ -71,7 +70,7 @@ const DIFFICULTY_LABELS = {
 
 const router = useRouter()
 const form = reactive({
-  title: '', desc: '', emoji: '📝', difficulty: 'medium', timePerQuestion: 30,
+  title: '', desc: '', difficulty: 'medium', timePerQuestion: 30,
   questions: [createEmptyQuestion(), createEmptyQuestion()]
 })
 
@@ -92,7 +91,6 @@ async function saveQuiz() {
 
   const quiz = {
     id: 'custom_' + Date.now(),
-    emoji: form.emoji || '📝',
     title: form.title.trim(),
     desc: form.desc.trim(),
     difficulty: form.difficulty,
@@ -109,7 +107,7 @@ async function saveQuiz() {
 
   try {
     await store.addCustomQuiz(quiz)
-    showToast(`Квиз "${quiz.title}" сохранён! ✨`, 'success')
+    showToast(`Квиз "${quiz.title}" сохранён!`, 'success')
     router.push('/')
   } catch (e) {
     console.error('Save failed:', e)

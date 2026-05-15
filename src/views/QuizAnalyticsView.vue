@@ -3,9 +3,9 @@
     <!-- Заголовок -->
     <div class="analytics-header">
       <button class="back-btn" @click="$router.push('/')">←</button>
-      <h2>📊 Аналитика: {{ analytics?.quiz_title }}</h2>
+      <h2>Аналитика: {{ analytics?.quiz_title }}</h2>
       <button v-if="analytics" class="btn-export" @click="exportData">
-        📥 Экспорт CSV
+        Экспорт CSV
       </button>
     </div>
 
@@ -17,8 +17,8 @@
 
     <!-- Ошибка -->
     <div v-else-if="error" class="analytics-error">
-      <p>❌ {{ error }}</p>
-      <button class="back-btn" @click="$router.push('/')">🏠 На главную</button>
+      <p>{{ error }}</p>
+      <button class="back-btn" @click="$router.push('/')">На главную</button>
     </div>
 
     <!-- Дашборд -->
@@ -45,7 +45,7 @@
 
       <!-- Самый сложный вопрос -->
       <div v-if="hardestQuestion" class="hardest-question">
-        <h3>🔴 Самый сложный вопрос</h3>
+        <h3>Самый сложный вопрос</h3>
         <div class="question-card">
           <p class="question-text">{{ hardestQuestion.question_text }}</p>
           <div class="question-stats">

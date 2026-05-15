@@ -26,9 +26,9 @@
         </span>
         
         <div class="role-badge" :class="isHost ? 'badge-host' : 'badge-player'">
-          {{ isHost ? '🎤 Хост' : '👤 Игрок' }}
+          {{ isHost ? 'Хост' : 'Игрок' }}
         </div>
-        <div class="score-display">⭐ {{ myScore }}</div>
+        <div class="score-display"> Счет: {{ myScore }}</div>
       </div>
     </div>
 
@@ -51,13 +51,13 @@
 
       <div class="host-controls">
         <div class="player-counter">
-          <span class="counter-icon">👥</span>
+          <span class="counter-icon"></span>
           <span>Игроков: {{ players.length }}</span>
         </div>
         <button class="btn-next-host" @click="nextQuestionHost" :disabled="advancing">
-          {{ advancing ? 'Переход...' : (isLastQuestion ? '🏁 Завершить игру' : '➡️ Следующий вопрос') }}
+          {{ advancing ? 'Переход...' : (isLastQuestion ? 'Завершить игру' : 'Следующий вопрос') }}
         </button>
-        <p class="host-hint">💡 Хост управляет игрой. Игроки отвечают самостоятельно.</p>
+        <p class="host-hint">Хост управляет игрой. Игроки отвечают самостоятельно.</p>
       </div>
     </div>
 
@@ -83,9 +83,9 @@
           </button>
         </div>
 
-        <div v-if="answered" class="explanation">💡 {{ currentQuestion?.explanation }}</div>
+        <div v-if="answered" class="explanation">{{ currentQuestion?.explanation }}</div>
         <div v-if="answered" class="waiting-next">
-          <p>✅ Ответ принят! Ожидайте, пока хост нажмёт «Далее»...</p>
+          <p>Ответ принят! Ожидайте, пока хост нажмёт «Далее»...</p>
         </div>
       </div>
 
@@ -94,7 +94,7 @@
           ⏱ {{ timeLeft }}с
         </div>
         <div v-if="leaderboard.length" class="mini-leaderboard">
-          <h4>🏆 Топ-3</h4>
+          <h4>Топ-3</h4>
           <div v-for="(p, i) in leaderboard.slice(0, 3)" :key="p.nickname" class="leader-item">
             <span class="rank">#{{ i + 1 }}</span>
             <span class="name">{{ p.nickname }}</span>
@@ -106,7 +106,7 @@
 
     <!-- Ожидание старта -->
     <div v-if="sessionStatus === 'waiting'" class="waiting-start">
-      <div class="waiting-icon">⏳</div>
+      <div class="waiting-icon"></div>
       <p v-if="isHost">Нажмите «Начать игру» в лобби, чтобы запустить квиз.</p>
       <p v-else>Ожидайте начала игры...</p>
     </div>
@@ -275,7 +275,7 @@ function timeUp() {
   answered.value = true
   canAnswer.value = false
   stopQuestionTimer()
-  showToast('Время вышло! ⏰', 'error')
+  showToast('Время вышло!', 'error')
   submitAnswerToServer(-1)
 }
 
@@ -326,7 +326,7 @@ async function nextQuestionHost() {
       showFinalResults()
     } else {
       await api.nextQuestion(sessionId.value)
-      showToast('Следующий вопрос! 🎯', 'success')
+      showToast('Следующий вопрос!', 'success')
     }
   } catch (e) {
     console.error('Next question failed:', e)
@@ -404,7 +404,7 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 .current-nickname {
   font-weight: 600;
   font-size: 0.85rem;
-  color: #fff;
+  color: #3b3a3a;
   background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(253, 121, 168, 0.2));
   border: 1px solid rgba(108, 92, 231, 0.3);
   padding: 6px 12px;

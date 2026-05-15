@@ -214,41 +214,48 @@ async function loadQuiz(quizId) {
 }
 
 async function loadSessionState() {
-  const state = await api.getSessionState(sessionId.value)
-  sessionStatus.value = state.status
-  players.value = state.players || []
-  
-  // Обновляем лидерборд
-  if (state.status === 'active' || state.status === 'finished') {
-    try {
-      const lb = await api.getLeaderboard(sessionId.value)
-      leaderboard.value = lb.leaderboard || []
-      const me = leaderboard.value.find(p => p.nickname === myNickname.value)
-      if (me) myScore.value = me.score
-    } catch (e) { console.error('Leaderboard error:', e) }
-  }
-  
-  // 🔑 КЛЮЧЕВОЕ: Обрабатываем смену вопроса
-  const newIdx = state.current_question ?? 0
-  if (newIdx !== lastProcessedQuestionIndex.value) {
-    lastProcessedQuestionIndex.value = newIdx
-    currentQuestionIndex.value = newIdx
+  try {
+    const state = await api.getSessionState(sessionId.value)
+    sessionStatus.value = state.status
+    players.value = state.players || []
     
-    // Сбрасываем состояние для нового вопроса
-    answered.value = false
-    selected.value = null
-    canAnswer.value = true
-    timeLeft.value = quizTime.value
-    
-    // Запускаем таймер ТОЛЬКО у игроков
-    if (!isHost.value && state.status === 'active') {
-      startQuestionTimer()
+    if (state.status === 'active' || state.status === 'finished') {
+      try {
+        const lb = await api.getLeaderboard(sessionId.value)
+        leaderboard.value = lb.leaderboard || []
+        const me = leaderboard.value.find(p => p.nickname === myNickname.value)
+        if (me) myScore.value = me.score
+      } catch (e) { 
+        console.error('Leaderboard error:', e) 
+      }
     }
-  }
-  
-  if (state.status === 'finished') {
-    clearInterval(pollInterval)
-    showFinalResults()
+    
+    const newIdx = state.current_question ?? 0
+    if (newIdx !== lastProcessedQuestionIndex.value) {
+      lastProcessedQuestionIndex.value = newIdx
+      currentQuestionIndex.value = newIdx
+      
+      answered.value = false
+      selected.value = null
+      canAnswer.value = true
+      timeLeft.value = quizTime.value
+      
+      if (!isHost.value && state.status === 'active') {
+        startQuestionTimer()
+      }
+    }
+    
+    if (state.status === 'finished') {
+      clearInterval(pollInterval)
+      stopQuestionTimer()
+      showToast('Игра завершена! Загрузка результатов...', 'success')
+      setTimeout(() => {
+        showFinalResults()
+      }, 1000)
+    }
+    
+  } catch (e) {
+    console.error('Session state load failed:', e)
   }
 }
 
@@ -322,15 +329,27 @@ async function nextQuestionHost() {
   
   try {
     if (isLastQuestion.value) {
-      await api.finishSession(sessionId.value)
+      // === ЗАВЕРШЕНИЕ ИГРЫ ===
+      try {
+        await api.finishSession(sessionId.value)
+        showToast('Игра завершена!', 'success')
+      } catch (finishError) {
+        console.warn('Finish session error (continuing):', finishError)
+        showToast('Игра завершена', 'warning')
+      }
+      
       showFinalResults()
+      
     } else {
       await api.nextQuestion(sessionId.value)
       showToast('Следующий вопрос!', 'success')
     }
+    
   } catch (e) {
-    console.error('Next question failed:', e)
-    showToast('Ошибка перехода', 'error')
+    console.error('Game progression failed:', e)
+    if (isHost.value) {
+      showToast('Ошибка перехода', 'error')
+    }
   } finally {
     advancing.value = false
   }

@@ -8,7 +8,7 @@
 
   <form @submit.prevent="saveQuiz">
     <div class="form-section">
-      <h3>📝 Основная информация</h3>
+      <h3>Основная информация</h3>
       <div class="form-group">
         <label>Название</label>
         <input v-model="form.title" required maxlength="50" placeholder="Например: Космос">
@@ -32,7 +32,7 @@
     </div>
 
     <div class="form-section">
-      <h3>❓ Вопросы</h3>
+      <h3>Вопросы</h3>
       <div v-for="(q, idx) in form.questions" :key="idx" class="question-editor">
         <div class="q-header">
           <span class="q-number">Вопрос {{ idx + 1 }}</span>
@@ -44,14 +44,14 @@
           <input v-model="q.options[oi]" required maxlength="100" placeholder="Вариант">
           <button type="button" :class="['correct-check', { active: q.correct === oi }]" @click="q.correct = oi">✓</button>
         </div>
-        <div class="explanation-input"><label>💡 Пояснение</label><textarea v-model="q.explanation" placeholder="Объяснение (необязательно)"></textarea></div>
+        <div class="explanation-input"><label>Пояснение</label><textarea v-model="q.explanation" placeholder="Объяснение (необязательно)"></textarea></div>
       </div>
-      <button type="button" class="add-question-btn" @click="addQuestion">+ Добавить вопрос</button>
+      <button type="button" class="add-question-btn" @click="addQuestion">Добавить вопрос</button>
     </div>
 
     <div class="form-actions">
       <button type="button" class="btn-cancel" @click="$router.push('/')">Отмена</button>
-      <button type="submit" class="btn-save">💾 Сохранить квиз</button>
+      <button type="submit" class="btn-save">Сохранить квиз</button>
     </div>
   </form>
 </template>

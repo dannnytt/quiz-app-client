@@ -16,14 +16,14 @@
     
     <div class="card-top">
       <div>
-        <span class="emoji">{{ quiz.emoji }}</span>
+        <!-- <span class="emoji">{{ quiz.emoji }}</span> -->
         <h3>{{ quiz.title }}</h3>
         <p class="desc">{{ quiz.desc }}</p>
       </div>
     </div>
     <div class="meta">
       <span class="difficulty" :class="quiz.difficulty">{{ getDifficultyLabel(quiz.difficulty) }}</span>
-      <span>📝 {{ quiz.questions?.length || 0 }} вопросов</span>
+      <span> {{ quiz.questions?.length || 0 }} вопросов</span>
       <span>⏱ {{ getTimePerQuestion(quiz) }}с</span>
     </div>
   </div>

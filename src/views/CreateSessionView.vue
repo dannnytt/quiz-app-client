@@ -32,15 +32,15 @@
         @click="startSession"
         :disabled="players.length < 1"
       >
-        🚀 Начать игру (мин. 1 игрок)
+        Начать игру (мин. 1 игрок)
       </button>
       
       <div v-if="!isHost" class="waiting-message">
-        <p>🎮 Ожидайте, пока хост начнёт игру...</p>
+        <p>Ожидайте, пока хост начнёт игру...</p>
       </div>
     </div>
     
-    <div v-else-if="error" class="error">❌ {{ error }}</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
@@ -59,7 +59,7 @@ const session = ref(null)
 const players = ref([])
 const myNickname = ref('')
 const playerToken = ref('')
-const isHost = ref(true) // 🔑 По умолчанию хост
+const isHost = ref(true)
 const loading = ref(false)
 const error = ref(null)
 

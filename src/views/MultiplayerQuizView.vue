@@ -5,8 +5,8 @@
   </div>
 
   <div v-else-if="error" class="quiz-error">
-    <p>❌ {{ error }}</p>
-    <button class="back-btn" @click="leaveSession" style="margin-top: 16px;">🏠 На главную</button>
+    <p>{{ error }}</p>
+    <button class="back-btn" @click="leaveSession" style="margin-top: 16px;">На главную</button>
   </div>
 
   <template v-else>
@@ -44,7 +44,7 @@
           <div v-for="(opt, i) in currentQuestion?.options" :key="i" class="option-preview">
             <span class="option-letter">{{ String.fromCharCode(65 + i) }}</span>
             <span>{{ opt }}</span>
-            <span v-if="i === currentQuestion?.correct" class="correct-indicator">✅</span>
+            <span v-if="i === currentQuestion?.correct" class="correct-indicator"></span>
           </div>
         </div>
       </div>
@@ -281,31 +281,38 @@ function timeUp() {
 
 function selectAnswer(index) {
   if (isHost.value || answered.value || !canAnswer.value) return
+  
   answered.value = true
   selected.value = index
   canAnswer.value = false
   stopQuestionTimer()
   
-  const bonus = Math.round((timeLeft.value / quizTime.value) * 50)
-  showToast(`Ответ отправлен! +${100 + bonus} очков`, 'success')
-  
   submitAnswerToServer(index)
 }
-
 async function submitAnswerToServer(optionIndex) {
   try {
-    // ✅ Защита от отрицательного времени
     const safeTimeLeft = Math.max(0, Math.min(timeLeft.value, quizTime.value))
     
-    await api.submitAnswer(
+    const result = await api.submitAnswer(
       sessionId.value,
       playerToken.value,
       currentQuestionIndex.value,
       optionIndex,
-      safeTimeLeft  // Отправляем только корректное значение
+      safeTimeLeft
     )
+    
+    if (result?.correct) {
+      const bonus = Math.round((safeTimeLeft / quizTime.value) * 50)
+      showToast(`Верно! +${100 + bonus} очков`, 'success')
+      
+      myScore.value = result.score
+    } else {
+      showToast('Неверно', 'error')
+    }
+    
   } catch (e) { 
-    console.error('Submit answer failed:', e) 
+    console.error('Submit answer failed:', e)
+    showToast('Ошибка отправки ответа', 'error')
   }
 }
 

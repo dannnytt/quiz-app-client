@@ -5,8 +5,8 @@
   </div>
 
   <div v-else-if="error || !quiz" class="quiz-error">
-    <p>❌ {{ error || 'Квиз не найден' }}</p>
-    <button class="back-btn" @click="goHome" style="margin-top: 16px;">🏠 На главную</button>
+    <p>{{ error || 'Квиз не найден' }}</p>
+    <button class="back-btn" @click="goHome" style="margin-top: 16px;">На главную</button>
   </div>
 
   <template v-else>
@@ -19,9 +19,9 @@
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
         <div :class="['timer-display', { warning: timeLeft <= 5 }]">
-          ⏱ <span>{{ timeLeft }}</span>
+          Таймер: <span>{{ timeLeft }}с</span>
         </div>
-        <div class="score-display">⭐ <span>{{ score }}</span></div>
+        <div class="score-display"><span>{{ score }}</span></div>
       </div>
     </div>
 
@@ -52,7 +52,7 @@
       </div>
 
       <div v-if="answered" class="explanation">
-        💡 {{ currentQ?.explanation }}
+        {{ currentQ?.explanation }}
       </div>
 
       <div v-if="answered" class="next-btn-container">
@@ -148,7 +148,7 @@ function timeUp() {
   answered.value = true
   wrongCount.value++
   stopTimers()
-  showToast('Время вышло! ⏰', 'error')
+  showToast('Время вышло!', 'error')
 }
 
 function selectAnswer(index) {

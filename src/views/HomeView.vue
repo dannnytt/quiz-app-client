@@ -4,8 +4,8 @@
   
   <template v-else>
     <div class="home-actions">
-      <button class="action-btn create-btn" @click="$router.push('/create')">✨ Создать квиз</button>
-      <button class="action-btn join-btn" @click="$router.push('/join')">🔗 Присоединиться по коду</button>
+      <button class="action-btn create-btn" @click="$router.push('/create')">Создать квиз</button>
+      <button class="action-btn join-btn" @click="$router.push('/join')">Присоединиться по коду</button>
     </div>
 
     <div class="section-title">Готовые квизы</div>
@@ -19,7 +19,7 @@
     </div>
     
     <div v-if="!defaultQuizzes.length && !customQuizzes.length" class="no-quizzes">
-      <p>📭 Квизов пока нет. Создай свой первый!</p>
+      <p>Квизов пока нет.</p>
     </div>
   </template>
 </template>
@@ -27,7 +27,7 @@
 <script setup>
 import { computed } from 'vue'
 import { store } from '../composables/useQuizStore'
-import QuizCard from '../views/QuizCard.vue' // ✅ Путь в components/
+import QuizCard from '../views/QuizCard.vue'
 
 const defaultQuizzes = computed(() => store.quizzes?.filter(q => !q.isCustom) || [])
 const customQuizzes = computed(() => store.quizzes?.filter(q => q.isCustom) || [])

@@ -5,8 +5,7 @@
 
   <div class="container">
     <header class="header">
-      <h1>🧠 QuizMaster</h1>
-      <p>Выбери квиз и проверь свои знания!</p>
+      <h1>QuizMaster</h1>
     </header>
     <router-view />
   </div>

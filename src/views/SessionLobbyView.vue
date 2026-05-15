@@ -23,12 +23,11 @@
     <template v-else>
       <!-- Информация о квизе -->
       <div class="quiz-info-card">
-        <span class="quiz-emoji">{{ quiz?.emoji || '🎮' }}</span>
         <h3>{{ quiz?.title }}</h3>
         <p class="quiz-desc">{{ quiz?.desc }}</p>
         <div class="quiz-meta">
-          <span>📝 {{ quiz?.questions?.length || 0 }} вопросов</span>
-          <span>⏱ {{ quizTime }}с на вопрос</span>
+          <span> {{ quiz?.questions?.length || 0 }} вопросов</span>
+          <span>{{ quizTime }}с на вопрос</span>
           <span :class="['difficulty', quiz?.difficulty]">
             {{ difficultyLabel }}
           </span>
@@ -40,7 +39,7 @@
         <p>Поделитесь кодом с друзьями:</p>
         <div class="code-display" @click="copyCode">
           {{ hostCode }}
-          <span class="copy-hint">📋 Нажми, чтобы скопировать</span>
+          <span class="copy-hint">Нажми, чтобы скопировать</span>
         </div>
       </div>
 
@@ -58,7 +57,7 @@
             </div>
             <div class="player-info">
               <span class="player-name">{{ p.nickname }}</span>
-              <span v-if="p.isHost" class="badge host">🎤 Хост</span>
+              <span v-if="p.isHost" class="badge host">Хост</span>
               <span v-if="p.nickname === myNickname" class="badge you">Вы</span>
             </div>
           </div>
@@ -80,17 +79,16 @@
           @click="startGame"
           :disabled="players.length < 1 || starting"
         >
-          {{ starting ? 'Запуск...' : '🚀 Начать игру' }}
+          {{ starting ? 'Запуск...' : 'Начать игру' }}
         </button>
         <p class="hint">Минимум 1 игрок для старта</p>
       </div>
 
       <!-- Статус для игроков -->
       <div v-else class="player-status">
-        <div class="status-icon">⏳</div>
         <p>Ожидайте, пока <strong>{{ hostNickname }}</strong> начнёт игру...</p>
         <button class="btn-leave" @click="leaveSession">
-          🔙 Выйти из сессии
+          Выйти из сессии
         </button>
       </div>
     </template>

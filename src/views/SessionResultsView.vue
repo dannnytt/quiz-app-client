@@ -8,9 +8,9 @@
 
     <!-- Ошибка -->
     <div v-else-if="error" class="results-error">
-      <p>❌ {{ error }}</p>
+      <p>{{ error }}</p>
       <button class="back-btn" @click="$router.push('/')" style="margin-top: 16px;">
-        🏠 На главную
+        На главную
       </button>
     </div>
 
@@ -18,27 +18,14 @@
     <template v-else>
       <!-- Заголовок -->
       <div class="results-header">
-        <div class="results-emoji">🏆</div>
         <h1 class="results-title">Игра завершена!</h1>
-        <p class="results-subtitle">{{ quiz?.title }}</p>
       </div>
 
       <!-- Победитель -->
-      <div v-if="winner" class="winner-card">
-        <div class="winner-avatar">
-          {{ getAvatarLetter(winner.nickname) }}
-        </div>
-        <div class="winner-info">
-          <span class="winner-name">{{ winner.nickname }}</span>
-          <span class="winner-score">{{ winner.score }} очков</span>
-          <span class="winner-correct">✅ {{ winner.correct }} правильных</span>
-        </div>
-        <div class="winner-crown">👑</div>
-      </div>
 
       <!-- Таблица лидеров -->
       <div class="leaderboard-section">
-        <h3>📊 Таблица лидеров</h3>
+        <h3>Таблица лидеров</h3>
         <div class="leaderboard">
           <div 
             v-for="(player, index) in leaderboard" 
@@ -46,7 +33,7 @@
             :class="['leaderboard-item', { 'is-you': player.nickname === myNickname, 'top-3': index < 3 }]"
           >
             <span class="rank" :class="getRankClass(index)">
-              {{ getRankIcon(index) }} {{ index + 1 }}
+              {{ index + 1 }}
             </span>
             
             <div class="player-cell">
@@ -73,7 +60,7 @@
 
       <!-- Ваша статистика -->
       <div v-if="myResult" class="my-stats">
-        <h3>📈 Ваша статистика</h3>
+        <h3>Ваша статистика</h3>
         <div class="stats-grid">
           <div class="stat-card">
             <span class="stat-value">{{ myResult.correct }}</span>
@@ -97,19 +84,13 @@
       <!-- Кнопки действий -->
       <div class="results-actions">
         <button class="btn-home" @click="$router.push('/')">
-          🏠 На главную
+          На главную
         </button>
         <button v-if="isHost" class="btn-new-session" @click="createNewSession">
-          ✨ Новая сессия
+          Новая сессия
         </button>
       </div>
 
-      <!-- Кнопка поделиться (если в браузере) -->
-      <div v-if="canShare" class="share-section">
-        <button class="btn-share" @click="shareResults">
-          📤 Поделиться результатами
-        </button>
-      </div>
     </template>
   </div>
 </template>
@@ -119,7 +100,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
 import { store } from '../composables/useQuizStore'
-import { showToast } from '../composables/useToast'
 
 const route = useRoute()
 const router = useRouter()
@@ -135,9 +115,6 @@ const leaderboard = ref([])
 const myNickname = ref('')
 const playerToken = ref('')
 
-// Вычисляемые
-const winner = computed(() => leaderboard.value[0] || null)
-
 const myResult = computed(() => 
   leaderboard.value.find(p => p.nickname === myNickname.value)
 )
@@ -148,8 +125,6 @@ const isHost = computed(() => {
   const data = JSON.parse(stored)
   return data.isHost || false
 })
-
-const canShare = computed(() => typeof navigator.share !== 'undefined')
 
 // Инициализация
 async function init() {
@@ -198,10 +173,6 @@ function getAvatarLetter(nickname) {
   return (nickname?.[0] || '?').toUpperCase()
 }
 
-function getRankIcon(index) {
-  const icons = ['🥇', '🥈', '🥉']
-  return icons[index] || ''
-}
 
 function getRankClass(index) {
   if (index === 0) return 'gold'
@@ -232,32 +203,6 @@ function createNewSession() {
   }
 }
 
-async function shareResults() {
-  if (!canShare.value) return
-  
-  const my = myResult.value
-  const text = `🎮 Я сыграл в "${quiz.value?.title}" на QuizMaster!\n\n` +
-               `📊 Мои результаты:\n` +
-               `✅ ${my?.correct || 0}/${quiz.value?.questions?.length || 0} правильных\n` +
-               `⭐ ${my?.score || 0} очков\n` +
-               `🎯 ${getPercentage(my)}% точности\n\n` +
-               `Попробуй побить мой рекорд! 🚀`
-  
-  try {
-    await navigator.share({
-      title: 'Мои результаты в QuizMaster',
-      text,
-      url: window.location.origin
-    })
-  } catch (e) {
-    if (e.name !== 'AbortError') {
-      // Fallback: копируем в буфер
-      await navigator.clipboard.writeText(text)
-      showToast('Результаты скопированы! 📋', 'success')
-    }
-  }
-}
-
 onMounted(init)
 </script>
 
@@ -280,7 +225,7 @@ onMounted(init)
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(108, 92, 231, 0.2);
+  border: 3px solid var(--border);
   border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -308,6 +253,7 @@ onMounted(init)
   font-size: 1.8rem;
   font-weight: 800;
   margin-bottom: 8px;
+  color: var(--dark);
 }
 
 .results-subtitle {
@@ -315,10 +261,10 @@ onMounted(init)
   font-size: 1.1rem;
 }
 
-/* Карточка победителя */
+/* Карточка победителя — светлая тема */
 .winner-card {
-  background: linear-gradient(135deg, rgba(253, 203, 110, 0.15), rgba(108, 92, 231, 0.1));
-  border: 2px solid var(--warning);
+  background: linear-gradient(135deg, rgba(253, 203, 110, 0.12), rgba(108, 92, 231, 0.08));
+  border: 2px solid rgba(253, 203, 110, 0.4);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 30px;
@@ -326,6 +272,7 @@ onMounted(init)
   align-items: center;
   gap: 16px;
   text-align: left;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .winner-avatar {
@@ -352,34 +299,34 @@ onMounted(init)
 .winner-name {
   font-weight: 700;
   font-size: 1.2rem;
+  color: var(--dark);
 }
 
 .winner-score {
   font-weight: 600;
-  color: var(--warning);
+  color: #b48600;
 }
 
 .winner-correct {
   font-size: 0.9rem;
-  color: var(--success);
+  color: #00896b;
 }
 
-.winner-crown {
-  font-size: 2rem;
-}
-
-/* Таблица лидеров */
+/* Таблица лидеров — светлая тема */
 .leaderboard-section {
   background: var(--card-bg);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 30px;
   text-align: left;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .leaderboard-section h3 {
   margin-bottom: 16px;
   font-size: 1.2rem;
+  color: var(--dark);
 }
 
 .leaderboard {
@@ -394,31 +341,35 @@ onMounted(init)
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: rgba(255,255,255,0.03);
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: all 0.2s;
 }
 
 .leaderboard-item:hover {
-  background: rgba(255,255,255,0.06);
+  background: var(--card-bg);
+  border-color: var(--primary);
 }
 
 .leaderboard-item.is-you {
-  background: rgba(0, 184, 148, 0.1);
+  background: rgba(0, 184, 148, 0.08);
   border: 1px solid var(--success);
 }
 
 .leaderboard-item.top-3 {
   background: rgba(253, 203, 110, 0.08);
+  border-color: rgba(253, 203, 110, 0.3);
 }
 
 .rank {
   font-weight: 700;
   font-size: 1.1rem;
+  color: var(--dark);
 }
-.rank.gold { color: #ffd700; }
-.rank.silver { color: #c0c0c0; }
-.rank.bronze { color: #cd7f32; }
+.rank.gold { color: #b48600; }
+.rank.silver { color: #757575; }
+.rank.bronze { color: #9c6b3f; }
 
 .player-cell {
   display: flex;
@@ -446,6 +397,7 @@ onMounted(init)
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--dark);
 }
 
 .badge-you {
@@ -466,6 +418,7 @@ onMounted(init)
   display: block;
   font-weight: 700;
   font-size: 1.1rem;
+  color: var(--dark);
 }
 
 .score-label {
@@ -480,24 +433,28 @@ onMounted(init)
 .correct-value {
   font-weight: 600;
   font-size: 0.9rem;
+  color: var(--dark);
 }
-.correct-value.excellent { color: var(--success); }
-.correct-value.good { color: #63b3ed; }
-.correct-value.average { color: var(--warning); }
-.correct-value.poor { color: var(--danger); }
+.correct-value.excellent { color: #00896b; }
+.correct-value.good { color: #1976d2; }
+.correct-value.average { color: #b48600; }
+.correct-value.poor { color: #c05030; }
 
-/* Ваша статистика */
+/* Ваша статистика — светлая тема */
 .my-stats {
   background: var(--card-bg);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 30px;
   text-align: left;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .my-stats h3 {
   margin-bottom: 16px;
   font-size: 1.2rem;
+  color: var(--dark);
 }
 
 .stats-grid {
@@ -507,7 +464,8 @@ onMounted(init)
 }
 
 .stat-card {
-  background: rgba(255,255,255,0.03);
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px 12px;
   text-align: center;
@@ -525,8 +483,8 @@ onMounted(init)
   color: var(--gray);
 }
 
-/* Кнопки */
-.results-actions {
+/* Кнопки — ✅ ИСПРАВЛЕНО для светлой темы */
+/* .results-actions {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -538,29 +496,32 @@ onMounted(init)
   max-width: 300px;
   margin: 0 auto;
   padding: 14px 24px;
-  border: none;
   border-radius: 14px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-}
+  border: none;
+} */
 
-.btn-retry {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+/* .btn-retry {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
 }
 .btn-retry:hover {
+  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
-}
+} */
 
+/* ✅ КНОПКА "НА ГЛАВНУЮ" — теперь видна! */
 .btn-home {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
+  background: var(--card-bg);
+  color: var(--dark);
+  border: 1px solid var(--border);
 }
 .btn-home:hover {
-  background: rgba(255,255,255,0.15);
+  background: var(--card-bg2);
+  border-color: var(--primary);
 }
 
 .btn-new-session {
@@ -569,18 +530,18 @@ onMounted(init)
 }
 .btn-new-session:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 184, 148, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 184, 148, 0.2);
 }
 
-/* Поделиться */
+/* Поделиться — светлая тема */
 .share-section {
   margin-top: 10px;
 }
 
 .btn-share {
   padding: 12px 24px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--gray);
   font-size: 0.9rem;
@@ -588,8 +549,9 @@ onMounted(init)
   transition: all 0.2s;
 }
 .btn-share:hover {
-  background: rgba(255,255,255,0.12);
-  color: #fff;
+  background: var(--card-bg2);
+  border-color: var(--primary);
+  color: var(--dark);
 }
 
 /* Адаптив */

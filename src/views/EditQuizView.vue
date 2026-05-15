@@ -7,9 +7,9 @@
 
   <!-- Ошибка: квиз не найден или не пользовательский -->
   <div v-else-if="error || !quiz" class="quiz-error">
-    <p>❌ {{ error || 'Квиз не найден' }}</p>
+    <p>{{ error || 'Квиз не найден' }}</p>
     <button class="back-btn" @click="$router.push('/')" style="margin-top: 16px;">
-      🏠 На главную
+      На главную
     </button>
   </div>
 
@@ -24,7 +24,7 @@
 
     <form @submit.prevent="updateQuiz">
       <div class="form-section">
-        <h3>📝 Основная информация</h3>
+        <h3>Основная информация</h3>
         
         <div class="form-group">
           <label>Название</label>
@@ -45,9 +45,9 @@
           <div class="form-group">
             <label>Сложность</label>
             <select v-model="form.difficulty">
-              <option value="easy">🟢 Лёгкий</option>
-              <option value="medium">🟡 Средний</option>
-              <option value="hard">🔴 Сложный</option>
+              <option value="easy">Лёгкий</option>
+              <option value="medium">Средний</option>
+              <option value="hard">Сложный</option>
             </select>
           </div>
           
@@ -59,7 +59,7 @@
       </div>
 
       <div class="form-section">
-        <h3>❓ Вопросы ({{ form.questions.length }})</h3>
+        <h3>Вопросы ({{ form.questions.length }})</h3>
         
         <div v-for="(q, idx) in form.questions" :key="q._uid || idx" class="question-editor">
           <div class="q-header">
@@ -100,7 +100,7 @@
           </div>
           
           <div class="explanation-input">
-            <label>💡 Пояснение (необязательно)</label>
+            <label>Пояснение (необязательно)</label>
             <textarea 
               v-model="q.explanation" 
               placeholder="Объяснение правильного ответа..."
@@ -119,7 +119,7 @@
           Отмена
         </button>
         <button type="submit" class="btn-save" :disabled="saving">
-          {{ saving ? 'Сохранение...' : '💾 Обновить квиз' }}
+          {{ saving ? 'Сохранение...' : 'Обновить квиз' }}
         </button>
       </div>
     </form>

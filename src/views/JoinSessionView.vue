@@ -30,11 +30,11 @@
       </div>
       
       <button type="submit" class="btn-join" :disabled="loading">
-        {{ loading ? 'Подключение...' : '🎮 Присоединиться' }}
+        {{ loading ? 'Подключение...' : 'Присоединиться' }}
       </button>
     </form>
     
-    <div v-if="error" class="error">❌ {{ error }}</div>
+    <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 

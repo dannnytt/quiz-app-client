@@ -74,20 +74,20 @@
       <div class="charts-grid">
         <!-- Точность по вопросам -->
         <div class="chart-card">
-          <h4>📈 Точность по вопросам</h4>
+          <h4>Точность по вопросам</h4>
           <Bar :data="accuracyChartData" :options="chartOptions" />
         </div>
         
         <!-- Время ответа -->
         <div class="chart-card">
-          <h4>⏱ Среднее время ответа</h4>
+          <h4>Среднее время ответа</h4>
           <Line :data="timeChartData" :options="timeChartOptions" />
         </div>
       </div>
 
       <!-- Таблица вопросов -->
       <div class="questions-table">
-        <h4>📋 Детали по вопросам</h4>
+        <h4>Детали по вопросам</h4>
         <table>
           <thead>
             <tr>

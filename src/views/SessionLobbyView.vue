@@ -13,7 +13,7 @@
 
     <!-- Ошибка -->
     <div v-else-if="error" class="lobby-error">
-      <p>❌ {{ error }}</p>
+      <p>{{ error }}</p>
       <button class="back-btn" @click="$router.push('/')" style="margin-top: 16px;">
         🏠 На главную
       </button>

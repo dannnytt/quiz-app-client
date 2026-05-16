@@ -44,7 +44,7 @@
           <div v-for="(opt, i) in currentQuestion?.options" :key="i" class="option-preview">
             <span class="option-letter">{{ String.fromCharCode(65 + i) }}</span>
             <span>{{ opt }}</span>
-            <span v-if="i === currentQuestion?.correct" class="correct-indicator"></span>
+            <span v-if="i === currentQuestion?.correct" class="correct-indicator">Правильный</span>
           </div>
         </div>
       </div>
@@ -387,7 +387,23 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 .question-preview { background: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; text-align: left; border: 1px solid rgba(255,255,255,0.06); }
 .options-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .option-preview { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
-.correct-indicator { margin-left: auto; font-size: 1.2rem; }
+.correct-indicator {
+  margin-left: auto;
+  padding: 4px 10px;
+  background: rgba(0, 184, 148, 0.15);
+  border: 1px solid rgba(0, 184, 148, 0.4);
+  border-radius: 20px;
+  color: #00896b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.correct-indicator::before {
+  font-weight: 700;
+}
 .host-controls { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .player-counter { display: flex; align-items: center; gap: 8px; color: var(--gray); font-size: 0.95rem; }
 .btn-next-host { width: 100%; max-width: 400px; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; border-radius: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }

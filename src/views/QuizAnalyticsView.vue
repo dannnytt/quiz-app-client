@@ -1,6 +1,5 @@
 <template>
   <div class="analytics-container">
-    <!-- Заголовок -->
     <div class="analytics-header">
       <button class="back-btn" @click="$router.push('/')">←</button>
       <h2>Аналитика: {{ analytics?.quiz_title }}</h2>
@@ -9,21 +8,17 @@
       </button>
     </div>
 
-    <!-- Загрузка -->
     <div v-if="loading" class="analytics-loading">
       <div class="loading-spinner"></div>
       <p>Загрузка статистики...</p>
     </div>
 
-    <!-- Ошибка -->
     <div v-else-if="error" class="analytics-error">
       <p>{{ error }}</p>
       <button class="back-btn" @click="$router.push('/')">На главную</button>
     </div>
 
-    <!-- Дашборд -->
     <template v-else-if="analytics">
-      <!-- Общие метрики -->
       <div class="metrics-grid">
         <div class="metric-card">
           <span class="metric-value">{{ analytics.total_players }}</span>
@@ -43,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Самый сложный вопрос -->
       <div v-if="hardestQuestion" class="hardest-question">
         <h3>Самый сложный вопрос</h3>
         <div class="question-card">
@@ -54,7 +48,6 @@
               Чаще ошибались на вариант: {{ String.fromCharCode(65 + hardestQuestion.most_chosen_wrong) }}
             </span>
           </div>
-          <!-- Мини-диаграмма распределения -->
           <div class="option-bars">
             <div v-for="(count, idx) in hardestQuestion.option_distribution" 
                  :key="idx"
@@ -70,22 +63,18 @@
         </div>
       </div>
 
-      <!-- Диаграммы -->
       <div class="charts-grid">
-        <!-- Точность по вопросам -->
         <div class="chart-card">
           <h4>Точность по вопросам</h4>
           <Bar :data="accuracyChartData" :options="chartOptions" />
         </div>
         
-        <!-- Время ответа -->
         <div class="chart-card">
           <h4>Среднее время ответа</h4>
           <Line :data="timeChartData" :options="timeChartOptions" />
         </div>
       </div>
 
-      <!-- Таблица вопросов -->
       <div class="questions-table">
         <h4>Детали по вопросам</h4>
         <table>
@@ -155,7 +144,6 @@ async function loadAnalytics() {
   }
 }
 
-// ✅ ВЫЧИСЛЯЕМЫЕ СВОЙСТВА
 const getTotalAccuracy = computed(() => {
   if (!analytics.value?.questions?.length) return 0
   const total = analytics.value.questions.reduce((sum, q) => sum + q.total_answers, 0)
@@ -170,12 +158,11 @@ const hardestQuestion = computed(() => {
     .reduce((min, q) => q.accuracy_rate < min.accuracy_rate ? q : min, analytics.value.questions[0])
 })
 
-// ✅ ДИАГРАММЫ (исправлены синтаксические ошибки)
 const accuracyChartData = computed(() => ({
   labels: analytics.value?.questions?.map((_, i) => `В${i + 1}`) || [],
   datasets: [{
     label: 'Точность, %',
-    data: analytics.value?.questions?.map(q => q.accuracy_rate * 100) || [],  // ✅ Добавлен ключ "data:"
+    data: analytics.value?.questions?.map(q => q.accuracy_rate * 100) || [],  
     backgroundColor: analytics.value?.questions?.map(q => {
       const rate = q.accuracy_rate * 100
       return rate >= 80 ? 'rgba(0, 184, 148, 0.7)' : rate >= 50 ? 'rgba(253, 203, 110, 0.7)' : 'rgba(225, 112, 85, 0.7)'
@@ -189,7 +176,7 @@ const timeChartData = computed(() => ({
   labels: analytics.value?.questions?.map((_, i) => `В${i + 1}`) || [],
   datasets: [{
     label: 'Среднее время, с',
-    data: analytics.value?.questions?.map(q => q.avg_response_time || 0) || [],  // ✅ Исправлено: "data:" + "analytics.value"
+    data: analytics.value?.questions?.map(q => q.avg_response_time || 0) || [],  
     borderColor: 'rgba(108, 92, 231, 1)',
     backgroundColor: 'rgba(108, 92, 231, 0.1)',
     fill: true,
@@ -210,7 +197,7 @@ const timeChartOptions = {
         callback: (value) => `${value}s`,
         maxTicksLimit: 8
       },
-      suggestedMax: 60 // Если вопросы обычно решаются до 60 секунд
+      suggestedMax: 60 
     }
   }
 }
@@ -229,14 +216,10 @@ const chartOptions = {
   scales: {
     y: {
       beginAtZero: true,
-      // ✅ Убираем stepSize, пусть Chart.js считает сам
-      // ✅ Добавляем форматирование значений
       ticks: {
         callback: (value) => `${value}%`,
-        // Ограничиваем кол-во делений
         maxTicksLimit: 10
       },
-      // ✅ Ограничиваем максимальное значение оси (опционально)
       suggestedMax: 100
     },
     x: {
@@ -248,15 +231,12 @@ const chartOptions = {
   }
 }
 
-// ✅ ФУНКЦИИ-УТИЛИТЫ
 const getBarWidth = (value, arr) => {
   const max = Math.max(...arr, 1)
   return (value / max) * 100
 }
 
 const getCorrectOption = (questionIndex) => {
-  // Пока бэкенд не возвращает correct_index, возвращаем null
-  // Для полной работы добавьте "correct_index: question.correct" в ответ бэкенда
   return null
 }
 
@@ -348,7 +328,6 @@ onMounted(loadAnalytics)
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Метрики */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -377,7 +356,6 @@ onMounted(loadAnalytics)
   color: var(--gray);
 }
 
-/* Самый сложный вопрос */
 .hardest-question {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -451,7 +429,6 @@ onMounted(loadAnalytics)
   border: 2px solid rgba(255,255,255,0.3);
 }
 
-/* Диаграммы */
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -466,7 +443,6 @@ onMounted(loadAnalytics)
   border: 1px solid var(--border);
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   
-  /* ✅ Ключевые свойства для Chart.js */
   position: relative;
   height: 300px;
   min-height: 250px;
@@ -484,7 +460,6 @@ onMounted(loadAnalytics)
   max-height: 100%;
 }
 
-/* Таблица */
 .questions-table {
   background: var(--card-bg);
   border-radius: 16px;
@@ -546,7 +521,6 @@ td {
   color: #c05030; 
 }
 
-/* Адаптив */
 @media (max-width: 768px) {
   .charts-grid {
     grid-template-columns: 1fr;

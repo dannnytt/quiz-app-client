@@ -117,7 +117,6 @@ async function loadQuiz() {
     }
     
     quiz.value = found
-    // ✅ Поддержка обоих форматов времени
     timeLeft.value = found.timePerQuestion || found.time_per_question || 30
     
   } catch (e) {
@@ -165,10 +164,10 @@ function selectAnswer(index) {
     const timePerQ = quiz.value.timePerQuestion || quiz.value.time_per_question || 30
     const speedBonus = Math.round((timeLeft.value / timePerQ) * 50)
     score.value += 100 + speedBonus
-    showToast('✅ Верно! +' + (100 + speedBonus), 'success')
+    showToast('Верно! +' + (100 + speedBonus), 'success')
   } else {
     wrongCount.value++
-    showToast('❌ Неверно', 'error')
+    showToast('Неверно', 'error')
   }
 }
 
@@ -179,7 +178,7 @@ async function nextQuestion() {
     stopTimers()
     try {
       await store.addResult({
-        quiz_id: quiz.value.id,  // ✅ snake_case для бэкенда
+        quiz_id: quiz.value.id,
         quiz_name: quiz.value.title,
         emoji: quiz.value.emoji,
         correct: correctCount.value,

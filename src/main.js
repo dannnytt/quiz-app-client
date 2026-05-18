@@ -6,7 +6,6 @@ import { store } from './composables/useQuizStore'
 
 const app = createApp(App)
 
-// Инициализируем стор ПЕРЕД монтированием
 async function bootstrap() {
   try {
     await store.init()

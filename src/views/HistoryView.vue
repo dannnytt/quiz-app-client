@@ -18,7 +18,6 @@
     <div v-for="r in normalizedResults" :key="r.id || r._uid" class="result-item">
       <span class="result-emoji">{{ r.emoji || '📝' }}</span>
       <div class="result-info">
-        <!-- ✅ Поддержка обоих форматов имён полей -->
         <h4>{{ r.quizName || r.quiz_name || 'Неизвестный квиз' }}</h4>
         <p>
           {{ r.correct ?? 0 }}/{{ r.total ?? 0 }} верных · 
@@ -38,7 +37,6 @@ import { computed } from 'vue'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
 
-// ✅ Нормализуем результаты: snake_case → camelCase для удобства
 const normalizedResults = computed(() => 
   (store.results || []).map(r => ({
     _uid: r.id || r._uid || Date.now() + Math.random(),
@@ -46,11 +44,10 @@ const normalizedResults = computed(() =>
     quizId: r.quiz_id || r.quizId,
     emoji: r.emoji,
     correct: r.correct ?? 0,
-    total: r.total ?? 1,  // Защита от деления на 0
+    total: r.total ?? 1,
     score: r.score ?? 0,
     time: r.time ?? 0,
     created_at: r.created_at || r.date,
-    // Сохраняем исходный объект для доступа к любым полям
     _original: r
   }))
 )
@@ -58,7 +55,6 @@ const normalizedResults = computed(() =>
 const formatDate = (d) => {
   if (!d) return ''
   const date = new Date(d)
-  // Проверка на валидную дату
   if (isNaN(date.getTime())) return ''
   return date.toLocaleDateString('ru-RU', { 
     day: 'numeric', 

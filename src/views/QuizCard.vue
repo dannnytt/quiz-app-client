@@ -1,7 +1,6 @@
 <template>
   <div :class="['quiz-card', { 'my-quiz': isCustom }]" @click="startQuiz">
     
-    <!-- Кнопки действий для кастомных квизов -->
     <div class="card-actions" v-if="isCustom" @click.stop>
       <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
         Аналитика
@@ -17,7 +16,6 @@
       </button>
     </div>
     
-    <!-- Кнопки для дефолтных квизов -->
     <div class="card-actions" v-else @click.stop>
       <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
         Аналитика
@@ -104,7 +102,6 @@ const deleteQuiz = async (event) => {
 </script>
 
 <style scoped>
-/* === Карточка квиза === */
 .quiz-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -123,7 +120,6 @@ const deleteQuiz = async (event) => {
   box-shadow: 0 12px 30px rgba(108, 92, 231, 0.1);
 }
 
-/* === Кнопки действий — ТЕКСТОВЫЕ, ХОРОШО ВИДНЫ === */
 .card-actions {
   display: flex;
   flex-wrap: wrap;
@@ -135,13 +131,12 @@ const deleteQuiz = async (event) => {
 }
 
 .action-btn {
-  /* ✅ Чёткий контраст: тёмный текст на светлом фоне */
   padding: 8px 14px;
   min-width: 85px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--card-bg2);
-  color: var(--dark);              /* ✅ Тёмный текст для читаемости */
+  color: var(--dark);             
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -154,11 +149,10 @@ const deleteQuiz = async (event) => {
 }
 
 .action-btn:hover {
-  color: #fff;                      /* ✅ Белый текст при наведении */
+  color: #fff;                     
   transform: translateY(-1px);
 }
 
-/* Цветовые схемы при наведении */
 .analytics-btn:hover {
   background: var(--primary);
   border-color: var(--primary);
@@ -179,7 +173,6 @@ const deleteQuiz = async (event) => {
   border-color: var(--secondary);
 }
 
-/* === Контент карточки === */
 .card-top {
   margin-bottom: 16px;
 }
@@ -198,7 +191,6 @@ const deleteQuiz = async (event) => {
   line-height: 1.4;
 }
 
-/* === Мета-информация === */
 .meta {
   display: flex;
   gap: 12px;
@@ -218,7 +210,6 @@ const deleteQuiz = async (event) => {
 .difficulty.medium { background: rgba(253, 203, 110, 0.15); color: #b48600; }
 .difficulty.hard { background: rgba(225, 112, 85, 0.12); color: #c05030; }
 
-/* === Адаптив для мобильных === */
 @media (max-width: 500px) {
   .card-actions {
     position: static;

@@ -1,6 +1,5 @@
 <template>
   <div class="session-container">
-    <!-- Заголовок -->
     <div class="session-header">
       <button class="back-btn" @click="$router.push('/')">
         <span class="back-icon">←</span>
@@ -8,25 +7,20 @@
       <h1 class="session-title">Создать онлайн-сессию</h1>
     </div>
 
-    <!-- Загрузка -->
     <div v-if="loading" class="session-loading">
       <div class="loading-spinner"></div>
       <p class="loading-text">Создание сессии...</p>
     </div>
     
-    <!-- Ошибка -->
     <div v-else-if="error" class="session-error">
-      <div class="error-icon">⚠️</div>
       <p>{{ error }}</p>
       <button class="btn-secondary" @click="$router.push('/')">
         На главную
       </button>
     </div>
 
-    <!-- Успешно созданная сессия -->
     <div v-else-if="session" class="session-created">
       
-      <!-- Код сессии -->
       <div class="code-section">
         <p class="code-label">Код для подключения</p>
         <div class="code-display" @click="copyCode" :class="{ copied: codeCopied }">
@@ -37,7 +31,6 @@
         </div>
       </div>
 
-      <!-- Информация о квизе -->
       <div class="quiz-card">
         <div class="quiz-details">
           <h3 class="quiz-title">{{ quiz?.title }}</h3>
@@ -57,7 +50,6 @@
         </div>
       </div>
 
-      <!-- Список игроков -->
       <div class="players-section">
         <div class="section-header">
           <h4>Игроки</h4>
@@ -81,7 +73,6 @@
             <span v-if="p.nickname === myNickname" class="badge-you">Вы</span>
           </div>
           
-          <!-- Пустые слоты для визуализации -->
           <div v-for="i in emptySlots" :key="`empty-${i}`" class="player-item empty">
             <div class="player-avatar empty-avatar">?</div>
             <span class="player-name empty-name">Ожидание...</span>
@@ -89,7 +80,6 @@
         </div>
       </div>
 
-      <!-- Управление для хоста -->
       <div v-if="isHost" class="host-actions">
         <button 
           class="btn-primary" 
@@ -101,7 +91,6 @@
         <p class="hint">Минимум 1 игрок для старта</p>
       </div>
 
-      <!-- Статус для игроков -->
       <div v-else class="player-waiting">
         <div class="waiting-icon">⏳</div>
         <p>Ожидайте, пока <strong>{{ hostNickname }}</strong> начнёт игру...</p>
@@ -267,14 +256,13 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
 </script>
 
 <style scoped>
-/* === Контейнер === */
+
 .session-container {
   max-width: 520px;
   margin: 0 auto;
   padding: 24px 20px;
 }
 
-/* === Заголовок === */
 .session-header {
   display: flex;
   align-items: center;
@@ -308,7 +296,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   margin: 0;
 }
 
-/* === Загрузка / Ошибка === */
 .session-loading,
 .session-error {
   text-align: center;
@@ -347,7 +334,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   margin-bottom: 20px;
 }
 
-/* === Секция кода === */
 .code-section {
   margin-bottom: 24px;
 }
@@ -397,7 +383,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   font-weight: 600;
 }
 
-/* === Карточка квиза === */
 .quiz-card {
   display: flex;
   gap: 16px;
@@ -466,7 +451,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
 .difficulty.medium { background: rgba(253, 203, 110, 0.15); color: #b48600; }
 .difficulty.hard { background: rgba(225, 112, 85, 0.12); color: #c05030; }
 
-/* === Список игроков === */
 .players-section {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -576,7 +560,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   flex-shrink: 0;
 }
 
-/* === Кнопки действий === */
 .host-actions {
   text-align: center;
 }
@@ -610,7 +593,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   color: var(--gray);
 }
 
-/* === Ожидание игрока === */
 .player-waiting {
   text-align: center;
   padding: 24px;
@@ -648,7 +630,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   color: var(--danger);
 }
 
-/* === Адаптив === */
 @media (max-width: 480px) {
   .session-header {
     flex-direction: column;

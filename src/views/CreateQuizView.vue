@@ -61,13 +61,6 @@ import { useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
 
-// ✅ Локальная константа вместо импорта из стора
-const DIFFICULTY_LABELS = {
-  easy: 'Лёгкий',
-  medium: 'Средний',
-  hard: 'Сложный'
-}
-
 const router = useRouter()
 const form = reactive({
   title: '', desc: '', difficulty: 'medium', timePerQuestion: 30,
@@ -94,11 +87,10 @@ async function saveQuiz() {
     title: form.title.trim(),
     desc: form.desc.trim(),
     difficulty: form.difficulty,
-    // ✅ Бэкенд не требует difficultyLabel, можно не отправлять
-    time_per_question: form.timePerQuestion, // ✅ Правильное имя поля для бэкенда
+    time_per_question: form.timePerQuestion,
     isCustom: true,
     questions: form.questions.map(q => ({
-      text: q.text.trim(),    // ✅ text, а не q
+      text: q.text.trim(),
       options: q.options.map(o => o.trim()),
       correct: q.correct,
       explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`

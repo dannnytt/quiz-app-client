@@ -5,13 +5,11 @@
       <div class="question-counter">Ожидание начала игры</div>
     </div>
 
-    <!-- Загрузка -->
     <div v-if="loading" class="lobby-loading">
       <div class="loading-spinner"></div>
       <p>Подключение к сессии...</p>
     </div>
 
-    <!-- Ошибка -->
     <div v-else-if="error" class="lobby-error">
       <p>{{ error }}</p>
       <button class="back-btn" @click="$router.push('/')" style="margin-top: 16px;">
@@ -19,9 +17,7 @@
       </button>
     </div>
 
-    <!-- Основное лобби -->
     <template v-else>
-      <!-- Информация о квизе -->
       <div class="quiz-info-card">
         <h3>{{ quiz?.title }}</h3>
         <p class="quiz-desc">{{ quiz?.desc }}</p>
@@ -34,7 +30,6 @@
         </div>
       </div>
 
-      <!-- Код сессии (для хоста) -->
       <div v-if="isHost" class="session-code-card">
         <p>Поделитесь кодом с друзьями:</p>
         <div class="code-display" @click="copyCode">
@@ -43,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Список игроков -->
       <div class="players-section">
         <h4>Игроки ({{ players.length }})</h4>
         <div class="players-grid">
@@ -62,7 +56,6 @@
             </div>
           </div>
           
-          <!-- Пустые слоты для визуализации -->
           <div v-for="i in emptySlots" :key="`empty-${i}`" class="player-card empty">
             <div class="player-avatar">?</div>
             <div class="player-info">
@@ -72,7 +65,6 @@
         </div>
       </div>
 
-      <!-- Управление для хоста -->
       <div v-if="isHost" class="host-actions">
         <button 
           class="btn-start" 
@@ -84,7 +76,6 @@
         <p class="hint">Минимум 1 игрок для старта</p>
       </div>
 
-      <!-- Статус для игроков -->
       <div v-else class="player-status">
         <p>Ожидайте, пока <strong>{{ hostNickname }}</strong> начнёт игру...</p>
         <button class="btn-leave" @click="leaveSession">
@@ -105,12 +96,10 @@ import { store } from '../composables/useQuizStore'
 const route = useRoute()
 const router = useRouter()
 
-// Состояние
 const loading = ref(true)
 const error = ref(null)
 const starting = ref(false)
 
-// Данные сессии
 const sessionId = ref(route.params.sessionId)
 const sessionData = ref(null)
 const quiz = ref(null)
@@ -120,10 +109,8 @@ const myNickname = ref('')
 const playerToken = ref('')
 const isHost = ref(false)
 
-// Поллинг
 let pollInterval = null
 
-// Вычисляемые
 const quizTime = computed(() => 
   quiz.value?.timePerQuestion || quiz.value?.time_per_question || 30
 )
@@ -136,15 +123,12 @@ const hostNickname = computed(() => {
   return host?.nickname || 'Хост'
 })
 const emptySlots = computed(() => {
-  // Показываем до 8 слотов всего
   const filled = players.value.length
   return Math.max(0, Math.min(8 - filled, 4))
 })
 
-// Инициализация
 async function init() {
   try {
-    // Получаем данные из sessionStorage (записаны при присоединении)
     const stored = sessionStorage.getItem('multiplayer_session')
     if (!stored) {
       router.push('/join')
@@ -153,7 +137,6 @@ async function init() {
     
     const data = JSON.parse(stored)
     
-    // Проверка, что мы в правильной сессии
     if (data.sessionId !== sessionId.value) {
       router.push('/join')
       return
@@ -162,7 +145,6 @@ async function init() {
     myNickname.value = data.nickname
     playerToken.value = data.playerToken
     
-    // Загружаем квиз из стора
     if (store.loading) {
       await new Promise(resolve => {
         const check = setInterval(() => {
@@ -173,7 +155,6 @@ async function init() {
     
     quiz.value = store.getQuiz(data.quizId)
     if (!quiz.value) {
-      // Если квиза нет в сторе, пробуем загрузить отдельно
       const quizzes = await api.getQuizzes()
       quiz.value = quizzes.find(q => q.id === data.quizId)
     }
@@ -183,10 +164,8 @@ async function init() {
       return
     }
     
-    // Загружаем состояние сессии
     await loadSessionState()
     
-    // Запускаем поллинг
     startPolling()
     
   } catch (e) {
@@ -197,30 +176,24 @@ async function init() {
   }
 }
 
-// Загрузка состояния сессии
 async function loadSessionState() {
   const state = await api.getSessionState(sessionId.value)
   
   hostCode.value = state.host_code || ''
   
-  // Обновляем игроков с флагом isHost
   players.value = (state.players || []).map(p => ({
     ...p,
-    isHost: false // Бэкенд не возвращает isHost, определяем по нику
+    isHost: false 
   }))
   
-  // Определяем хоста (первый игрок или по нику)
-  // В реальной реализации бэкенд должен возвращать host_id
   if (players.value.length > 0 && !players.value[0].isHost) {
     players.value[0].isHost = true
   }
   
-  // Проверяем, являемся ли мы хостом
   isHost.value = players.value.some(p => 
     p.nickname === myNickname.value && p.isHost
   )
   
-  // Если сессия запущена — переходим в игру
   if (state.status === 'active') {
     router.push({
       name: 'MultiplayerQuiz',
@@ -228,7 +201,6 @@ async function loadSessionState() {
     })
   }
   
-  // Если сессия завершена — показываем результаты
   if (state.status === 'finished') {
     router.push({
       name: 'SessionResults',
@@ -237,7 +209,6 @@ async function loadSessionState() {
   }
 }
 
-// Поллинг обновлений
 function startPolling() {
   pollInterval = setInterval(async () => {
     try {
@@ -248,15 +219,13 @@ function startPolling() {
   }, 2000)
 }
 
-// Запуск игры (только хост)
 async function startGame() {
   if (starting.value) return
   
   starting.value = true
   try {
     await api.startSession(sessionId.value)
-    showToast('Игра началась! 🎮', 'success')
-    // Переход произойдёт автоматически через поллинг
+    showToast('Игра началась!', 'success')
   } catch (e) {
     console.error('Start failed:', e)
     showToast('Не удалось начать игру', 'error')
@@ -265,36 +234,31 @@ async function startGame() {
   }
 }
 
-// Копирование кода
 async function copyCode() {
   try {
     await navigator.clipboard.writeText(hostCode.value)
-    showToast('Код скопирован! 📋', 'success')
+    showToast('Код скопирован!', 'success')
   } catch {
-    // Fallback для старых браузеров
     const textarea = document.createElement('textarea')
     textarea.value = hostCode.value
     document.body.appendChild(textarea)
     textarea.select()
     document.execCommand('copy')
     document.body.removeChild(textarea)
-    showToast('Код скопирован! 📋', 'success')
+    showToast('Код скопирован!', 'success')
   }
 }
 
-// Выход из сессии
 function leaveSession() {
   if (pollInterval) clearInterval(pollInterval)
   sessionStorage.removeItem('multiplayer_session')
   router.push('/')
 }
 
-// Утилиты
 function getAvatarLetter(nickname) {
   return (nickname?.[0] || '?').toUpperCase()
 }
 
-// Lifecycle
 onMounted(init)
 onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
@@ -308,7 +272,6 @@ onUnmounted(() => {
   padding: 20px;
 }
 
-/* Загрузка / ошибка */
 .lobby-loading,
 .lobby-error {
   text-align: center;
@@ -328,7 +291,6 @@ onUnmounted(() => {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Карточка квиза */
 .quiz-info-card {
   background: var(--card-bg);
   border-radius: 20px;
@@ -375,8 +337,6 @@ onUnmounted(() => {
 .difficulty.medium { background: rgba(253,203,110,0.15); color: var(--warning); }
 .difficulty.hard { background: rgba(225,112,85,0.15); color: var(--danger); }
 
-/* Код сессии */
-/* Код сессии — исправлено для светлой темы */
 .session-code-card {
   text-align: center;
   margin-bottom: 24px;
@@ -396,12 +356,10 @@ onUnmounted(() => {
   font-size: 2.5rem;
   font-weight: 900;
   letter-spacing: 6px;
-  /* ✅ Тёмный текст для светлой темы */
   color: var(--dark, #2d3436) !important;
   -webkit-text-fill-color: var(--dark, #2d3436) !important;
   
   padding: 20px;
-  /* ✅ Чуть более светлый фон для контраста */
   background: rgba(108, 92, 231, 0.08);
   border: 2px solid rgba(108, 92, 231, 0.3);
   border-radius: 16px;
@@ -425,7 +383,6 @@ onUnmounted(() => {
   letter-spacing: normal;
 }
 
-/* Игроки */
 .players-section h4 {
   margin-bottom: 16px;
   font-size: 1.1rem;
@@ -521,7 +478,6 @@ onUnmounted(() => {
   color: var(--success);
 }
 
-/* Управление хоста */
 .host-actions {
   text-align: center;
   margin-top: 30px;
@@ -557,7 +513,6 @@ onUnmounted(() => {
   color: var(--gray);
 }
 
-/* Статус игрока */
 .player-status {
   text-align: center;
   margin-top: 30px;
@@ -597,7 +552,6 @@ onUnmounted(() => {
   background: rgba(225, 112, 85, 0.15);
 }
 
-/* Адаптив */
 @media (max-width: 500px) {
   .players-grid {
     grid-template-columns: repeat(2, 1fr);

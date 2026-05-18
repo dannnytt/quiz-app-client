@@ -1,6 +1,5 @@
 <template>
   <div class="results-container">
-    <div class="results-emoji">{{ data.emoji || '🏆' }}</div>
     <div class="results-title">{{ title }}</div>
     <div class="results-subtitle">{{ subtitle }}</div>
 
@@ -18,8 +17,8 @@
     </div>
 
     <div class="results-actions">
-      <button class="btn-retry" @click="retryQuiz">🔄 Пройти снова</button>
-      <button class="btn-home" @click="$router.push('/')">🏠 На главную</button>
+      <button class="btn-retry" @click="retryQuiz">Пройти снова</button>
+      <button class="btn-home" @click="$router.push('/')">На главную</button>
     </div>
   </div>
 </template>

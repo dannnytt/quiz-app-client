@@ -1,12 +1,10 @@
 <template>
   <div class="results-container">
-    <!-- Загрузка -->
     <div v-if="loading" class="results-loading">
       <div class="loading-spinner"></div>
       <p>Подсчёт результатов...</p>
     </div>
 
-    <!-- Ошибка -->
     <div v-else-if="error" class="results-error">
       <p>{{ error }}</p>
       <button class="back-btn" @click="$router.push('/')" style="margin-top: 16px;">
@@ -14,16 +12,12 @@
       </button>
     </div>
 
-    <!-- Результаты -->
     <template v-else>
-      <!-- Заголовок -->
       <div class="results-header">
         <h1 class="results-title">Игра завершена!</h1>
       </div>
 
-      <!-- Победитель -->
 
-      <!-- Таблица лидеров -->
       <div class="leaderboard-section">
         <h3>Таблица лидеров</h3>
         <div class="leaderboard">
@@ -58,7 +52,6 @@
         </div>
       </div>
 
-      <!-- Ваша статистика -->
       <div v-if="myResult" class="my-stats">
         <h3>Ваша статистика</h3>
         <div class="stats-grid">
@@ -81,7 +74,6 @@
         </div>
       </div>
 
-      <!-- Кнопки действий -->
       <div class="results-actions">
         <button class="btn-home" @click="$router.push('/')">
           На главную
@@ -104,11 +96,9 @@ import { store } from '../composables/useQuizStore'
 const route = useRoute()
 const router = useRouter()
 
-// Состояние
 const loading = ref(true)
 const error = ref(null)
 
-// Данные
 const sessionId = ref(route.params.sessionId)
 const quiz = ref(null)
 const leaderboard = ref([])
@@ -126,10 +116,8 @@ const isHost = computed(() => {
   return data.isHost || false
 })
 
-// Инициализация
 async function init() {
   try {
-    // Получаем данные сессии
     const stored = sessionStorage.getItem('multiplayer_session')
     if (!stored) {
       router.push('/')
@@ -140,7 +128,6 @@ async function init() {
     myNickname.value = data.nickname
     playerToken.value = data.playerToken
     
-    // Ждём загрузки стора
     if (store.loading) {
       await new Promise(resolve => {
         const check = setInterval(() => {
@@ -149,14 +136,12 @@ async function init() {
       })
     }
     
-    // Загружаем квиз
     quiz.value = store.getQuiz(data.quizId)
     if (!quiz.value) {
       const quizzes = await api.getQuizzes()
       quiz.value = quizzes.find(q => q.id === data.quizId)
     }
     
-    // Загружаем лидерборд
     const lb = await api.getLeaderboard(sessionId.value)
     leaderboard.value = lb.leaderboard || []
     
@@ -168,7 +153,6 @@ async function init() {
   }
 }
 
-// Утилиты
 function getAvatarLetter(nickname) {
   return (nickname?.[0] || '?').toUpperCase()
 }
@@ -214,7 +198,6 @@ onMounted(init)
   text-align: center;
 }
 
-/* Загрузка / ошибка */
 .results-loading,
 .results-error {
   padding: 60px 20px;
@@ -233,7 +216,6 @@ onMounted(init)
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Заголовок */
 .results-header {
   margin-bottom: 30px;
 }
@@ -261,7 +243,6 @@ onMounted(init)
   font-size: 1.1rem;
 }
 
-/* Карточка победителя — светлая тема */
 .winner-card {
   background: linear-gradient(135deg, rgba(253, 203, 110, 0.12), rgba(108, 92, 231, 0.08));
   border: 2px solid rgba(253, 203, 110, 0.4);
@@ -312,7 +293,6 @@ onMounted(init)
   color: #00896b;
 }
 
-/* Таблица лидеров — светлая тема */
 .leaderboard-section {
   background: var(--card-bg);
   border-radius: 20px;
@@ -440,7 +420,6 @@ onMounted(init)
 .correct-value.average { color: #b48600; }
 .correct-value.poor { color: #c05030; }
 
-/* Ваша статистика — светлая тема */
 .my-stats {
   background: var(--card-bg);
   border-radius: 20px;
@@ -513,7 +492,6 @@ onMounted(init)
   transform: translateY(-2px);
 } */
 
-/* ✅ КНОПКА "НА ГЛАВНУЮ" — теперь видна! */
 .btn-home {
   background: var(--card-bg);
   color: var(--dark);
@@ -533,7 +511,6 @@ onMounted(init)
   box-shadow: 0 10px 30px rgba(0, 184, 148, 0.2);
 }
 
-/* Поделиться — светлая тема */
 .share-section {
   margin-top: 10px;
 }
@@ -554,7 +531,6 @@ onMounted(init)
   color: var(--dark);
 }
 
-/* Адаптив */
 @media (max-width: 600px) {
   .leaderboard-item {
     grid-template-columns: 40px 1fr 70px 50px;

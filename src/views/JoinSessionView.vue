@@ -60,16 +60,14 @@ async function joinSession() {
   try {
     const result = await api.joinSession(hostCode.value.trim(), nickname.value.trim())
     
-    // 🔑 КЛЮЧЕВОЕ: Сохраняем isHost: false для игроков
     sessionStorage.setItem('multiplayer_session', JSON.stringify({
       sessionId: result.session_id,
       playerToken: result.player_token,
       nickname: result.nickname,
       quizId: result.quiz_id,
-      isHost: false  // ✅ Игрок НЕ хост
+      isHost: false
     }))
     
-    // Переходим в лобби
     router.push({
       name: 'SessionLobby',
       params: { sessionId: result.session_id }
@@ -112,15 +110,14 @@ async function joinSession() {
   color: var(--gray);
 }
 
-/* ✅ ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ПОЛЕЙ ВВОДА */
 .form-group input {
   width: 100%;
   padding: 14px 16px;
   background: var(--input-bg, #f8f9fa);
   border: 2px solid var(--input-border, #dee2e6);
   border-radius: 12px;
-  color: var(--dark, #2d3436) !important;           /* ✅ Тёмный текст */
-  -webkit-text-fill-color: var(--dark, #2d3436) !important; /* ✅ Для Safari */
+  color: var(--dark, #2d3436) !important;
+  -webkit-text-fill-color: var(--dark, #2d3436) !important;
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -138,7 +135,6 @@ async function joinSession() {
   opacity: 1 !important;
 }
 
-/* ✅ Особые стили для поля кода */
 .code-input {
   text-transform: uppercase;
   letter-spacing: 4px;
@@ -155,7 +151,6 @@ async function joinSession() {
   border-color: var(--primary) !important;
 }
 
-/* ✅ Исправление автозаполнения браузера */
 .form-group input:-webkit-autofill,
 .form-group input:-webkit-autofill:hover,
 .form-group input:-webkit-autofill:focus {

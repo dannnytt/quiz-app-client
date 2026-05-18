@@ -10,7 +10,6 @@
   </div>
 
   <template v-else>
-    <!-- Шапка -->
     <div class="quiz-header">
       <div class="quiz-info">
         <button class="back-btn" @click="leaveSession">←</button>
@@ -20,7 +19,6 @@
       </div>
       
       <div class="header-right">
-        <!-- ✅ Никнейм игрока -->
         <span class="current-nickname" :title="myNickname">
           {{ myNickname || 'Игрок' }}
         </span>
@@ -36,7 +34,6 @@
       <div class="progress-bar" :style="{ width: progress + '%' }"></div>
     </div>
 
-    <!-- === 🟣 ИНТЕРФЕЙС ХОСТА === -->
     <div v-if="isHost && sessionStatus === 'active'" class="host-panel">
       <div class="question-preview">
         <h3 class="question-text">{{ currentQuestion?.q || currentQuestion?.text || 'Загрузка...' }}</h3>
@@ -61,7 +58,6 @@
       </div>
     </div>
 
-    <!-- === 🔵 ИНТЕРФЕЙС ИГРОКА === -->
     <div v-else-if="!isHost && sessionStatus === 'active'" class="player-panel">
       <div class="question-container" ref="qContainer">
         <div class="question-text">{{ currentQuestion?.q || currentQuestion?.text }}</div>
@@ -104,7 +100,6 @@
       </div>
     </div>
 
-    <!-- Ожидание старта -->
     <div v-if="sessionStatus === 'waiting'" class="waiting-start">
       <div class="waiting-icon"></div>
       <p v-if="isHost">Нажмите «Начать игру» в лобби, чтобы запустить квиз.</p>
@@ -123,31 +118,26 @@ import { showToast } from '../composables/useToast'
 const route = useRoute()
 const router = useRouter()
 
-// Состояние
 const loading = ref(true)
 const error = ref(null)
 const advancing = ref(false)
 
-// Сессия
 const sessionId = ref(route.params.sessionId)
 const sessionStatus = ref('waiting')
 const players = ref([])
 const leaderboard = ref([])
 
-// Игрок
 const playerToken = ref('')
 const myNickname = ref('')
 const isHost = ref(false)
 const myScore = ref(0)
 
-// Квиз
 const quiz = ref(null)
 const questions = ref([])
 const totalQuestions = ref(0)
 const currentQuestionIndex = ref(0)
-const lastProcessedQuestionIndex = ref(-1) // 🔑 Отслеживает смену вопроса
+const lastProcessedQuestionIndex = ref(-1)
 
-// Игра
 const timeLeft = ref(30)
 const answered = ref(false)
 const selected = ref(null)
@@ -169,7 +159,7 @@ async function init() {
     const data = JSON.parse(stored)
     playerToken.value = data.playerToken
     myNickname.value = data.nickname
-    isHost.value = data.isHost || false // 🔑 Явно читаем флаг хоста
+    isHost.value = data.isHost || false
     
     if (store.loading) {
       await new Promise(resolve => {
@@ -329,7 +319,6 @@ async function nextQuestionHost() {
   
   try {
     if (isLastQuestion.value) {
-      // === ЗАВЕРШЕНИЕ ИГРЫ ===
       try {
         await api.finishSession(sessionId.value)
         showToast('Игра завершена!', 'success')
@@ -372,7 +361,6 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 </script>
 
 <style scoped>
-/* Базовые стили */
 .quiz-loading, .quiz-error { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; text-align: center; padding: 40px 20px; color: var(--gray); }
 .quiz-error { color: var(--danger); }
 .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(108, 92, 231, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
@@ -382,7 +370,6 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 .badge-host { background: rgba(253, 203, 110, 0.2); color: var(--warning); border: 1px solid rgba(253, 203, 110, 0.4); }
 .badge-player { background: rgba(0, 184, 148, 0.2); color: var(--success); border: 1px solid rgba(0, 184, 148, 0.4); }
 
-/* Хост */
 .host-panel { max-width: 600px; margin: 30px auto; text-align: center; }
 .question-preview { background: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; text-align: left; border: 1px solid rgba(255,255,255,0.06); }
 .options-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
@@ -411,7 +398,6 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 .btn-next-host:disabled { opacity: 0.6; cursor: not-allowed; }
 .host-hint { font-size: 0.85rem; color: var(--gray); margin-top: 8px; }
 
-/* Игрок */
 .waiting-next { margin-top: 20px; padding: 16px; background: rgba(0, 184, 148, 0.1); border-radius: 12px; text-align: center; color: var(--success); }
 .game-sidebar { position: fixed; right: 20px; top: 100px; width: 200px; display: flex; flex-direction: column; gap: 15px; z-index: 10; }
 .mini-leaderboard { background: var(--card-bg); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.06); }
@@ -450,7 +436,6 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
   text-overflow: ellipsis;
 }
 
-/* Адаптив для мобильных */
 @media (max-width: 600px) {
   .quiz-header {
     flex-wrap: wrap;
@@ -461,7 +446,7 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
     justify-content: flex-start;
   }
   .current-nickname {
-    order: -1; /* Никнейм первым на мобилке */
+    order: -1;
   }
 }
 

@@ -39,7 +39,6 @@ export const store = reactive({
   },
 
   async addCustomQuiz(quiz) {
-    // ✅ При отправке убираем isCustom, бэкенд сам выставит is_custom=true
     const payload = {
       title: quiz.title,
       desc: quiz.desc,
@@ -81,7 +80,6 @@ export const store = reactive({
   },
 
   async addResult(result) {
-    // ✅ Явный маппинг в snake_case для FastAPI
     const payload = {
       quiz_id: result.quizId,
       quiz_name: result.quizName,
@@ -100,7 +98,6 @@ export const store = reactive({
       }
     } catch (e) {
       console.error('Failed to save result:', e)
-      // 🔑 Фоллбэк: если API упал (422/500/сеть), показываем локальные данные
       this.lastResult = {
         ...payload,
         id: 'local_' + Date.now(),

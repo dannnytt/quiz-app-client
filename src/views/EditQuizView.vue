@@ -1,11 +1,9 @@
 <template>
-  <!-- Состояние загрузки -->
   <div v-if="loading" class="quiz-loading">
     <div class="loading-spinner"></div>
     <p>Загрузка квиза...</p>
   </div>
 
-  <!-- Ошибка: квиз не найден или не пользовательский -->
   <div v-else-if="error || !quiz" class="quiz-error">
     <p>{{ error || 'Квиз не найден' }}</p>
     <button class="back-btn" @click="$router.push('/')" style="margin-top: 16px;">
@@ -13,7 +11,6 @@
     </button>
   </div>
 
-  <!-- Форма редактирования -->
   <template v-else>
     <div class="quiz-header">
       <div class="quiz-info">
@@ -130,13 +127,11 @@ import { showToast } from '../composables/useToast'
 const route = useRoute()
 const router = useRouter()
 
-// Состояния
 const loading = ref(true)
 const error = ref(null)
 const saving = ref(false)
 const quiz = ref(null)
 
-// Форма
 const form = reactive({
   id: '',
   title: '',
@@ -146,16 +141,13 @@ const form = reactive({
   questions: []
 })
 
-// Уникальный счётчик для ключей вопросов
 let questionUid = 0
 
-// Загрузка квиза
 async function loadQuiz() {
   loading.value = true
   error.value = null
   
   try {
-    // Ждём, если стор ещё загружается
     if (store.loading) {
       await new Promise(resolve => {
         const check = setInterval(() => {
@@ -167,7 +159,6 @@ async function loadQuiz() {
       })
     }
     
-    // Ищем квиз в сторе
     const found = store.getQuiz(route.params.id)
     
     if (!found) {
@@ -175,7 +166,6 @@ async function loadQuiz() {
       return
     }
     
-    // 🔥 Критично: можно редактировать только пользовательские квизы
     if (!found.isCustom) {
       error.value = 'Редактирование доступно только для созданных вами квизов'
       return
@@ -183,25 +173,21 @@ async function loadQuiz() {
     
     quiz.value = found
     
-    // Заполняем форму с поддержкой обоих форматов полей
     form.id = found.id
     form.title = found.title || ''
     form.desc = found.desc || ''
     form.emoji = found.emoji || '📝'
     form.difficulty = found.difficulty || 'medium'
-    // Поддержка snake_case и camelCase
     form.timePerQuestion = found.time_per_question || found.timePerQuestion || 30
     
-    // Маппим вопросы: бэкенд → фронтенд
     form.questions = (found.questions || []).map(q => ({
-      _uid: questionUid++,  // Уникальный ключ для Vue
-      text: q.text || q.q || '',  // Поддержка обоих форматов
+      _uid: questionUid++,
+      text: q.text || q.q || '',
       options: Array.isArray(q.options) ? [...q.options] : ['', '', '', ''],
       correct: typeof q.correct === 'number' ? q.correct : 0,
       explanation: q.explanation || ''
     }))
     
-    // Если вопросов нет — добавляем два пустых
     if (form.questions.length === 0) {
       addQuestion()
       addQuestion()
@@ -215,7 +201,6 @@ async function loadQuiz() {
   }
 }
 
-// Добавление вопроса
 function addQuestion() {
   form.questions.push({
     _uid: questionUid++,
@@ -226,7 +211,6 @@ function addQuestion() {
   })
 }
 
-// Удаление вопроса
 function removeQuestion(idx) {
   if (form.questions.length <= 1) {
     showToast('Должен быть хотя бы один вопрос', 'error')
@@ -235,12 +219,10 @@ function removeQuestion(idx) {
   form.questions.splice(idx, 1)
 }
 
-// Установка правильного ответа
 function setCorrectAnswer(question, index) {
   question.correct = index
 }
 
-// Валидация формы
 function validateForm() {
   if (!form.title.trim()) {
     showToast('Введите название квиза', 'error')
@@ -274,33 +256,30 @@ function validateForm() {
   return true
 }
 
-// Обновление квиза
 async function updateQuiz() {
   if (!validateForm() || saving.value) return
   
   saving.value = true
   
   try {
-    // 🔥 Формируем payload для бэкенда (snake_case + text вместо q)
     const payload = {
       id: form.id,
       title: form.title.trim(),
       desc: form.desc.trim(),
       difficulty: form.difficulty,
-      time_per_question: form.timePerQuestion,  // ✅ snake_case для бэкенда
+      time_per_question: form.timePerQuestion,
       isCustom: true,
       questions: form.questions.map(q => ({
-        text: q.text.trim(),        // ✅ text, а не q
+        text: q.text.trim(),
         options: q.options.map(o => o.trim()),
         correct: q.correct,
         explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`
       }))
     }
     
-    // Вызываем обновление в сторе
     await store.updateCustomQuiz(payload)
     
-    showToast(`Квиз "${form.title}" обновлён! ✅`, 'success')
+    showToast(`Квиз "${form.title}" обновлён!`, 'success')
     router.push('/')
     
   } catch (e) {
@@ -311,7 +290,6 @@ async function updateQuiz() {
   }
 }
 
-// Lifecycle
 onMounted(loadQuiz)
 </script>
 
@@ -346,7 +324,6 @@ onMounted(loadQuiz)
   to { transform: rotate(360deg); }
 }
 
-/* Стили формы — светлая тема */
 .form-section {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -379,7 +356,6 @@ onMounted(loadQuiz)
   margin-bottom: 6px;
 }
 
-/* ✅ Поля ввода — светлая тема */
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -421,7 +397,6 @@ onMounted(loadQuiz)
   gap: 12px;
 }
 
-/* Редактор вопроса — светлая тема */
 .question-editor {
   background: var(--card-bg2);
   border: 1px solid var(--border);
@@ -579,7 +554,6 @@ onMounted(loadQuiz)
   border-color: var(--primary);
 }
 
-/* Кнопки действий */
 .form-actions {
   display: flex;
   gap: 12px;
@@ -624,7 +598,6 @@ onMounted(loadQuiz)
   cursor: not-allowed;
 }
 
-/* Адаптив */
 @media (max-width: 600px) {
   .form-row {
     grid-template-columns: 1fr;
@@ -635,7 +608,6 @@ onMounted(loadQuiz)
   }
 }
 
-/* ✅ Исправление автозаполнения браузера */
 .form-group input:-webkit-autofill,
 .form-group input:-webkit-autofill:hover,
 .form-group input:-webkit-autofill:focus,

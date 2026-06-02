@@ -23,7 +23,6 @@
         <p class="quiz-desc">{{ quiz?.desc }}</p>
         <div class="quiz-meta">
           <span> {{ quiz?.questions?.length || 0 }} вопросов</span>
-          <span>{{ quizTime }}с на вопрос</span>
           <span :class="['difficulty', quiz?.difficulty]">
             {{ difficultyLabel }}
           </span>

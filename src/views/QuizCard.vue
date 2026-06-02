@@ -35,7 +35,6 @@
     <div class="meta">
       <span class="difficulty" :class="quiz.difficulty">{{ getDifficultyLabel(quiz.difficulty) }}</span>
       <span>{{ quiz.questions?.length || 0 }} вопросов</span>
-      <span>Время: {{ getTimePerQuestion(quiz) }}с</span>
     </div>
   </div>
 </template>

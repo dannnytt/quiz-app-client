@@ -39,10 +39,7 @@
             <span class="meta-item">
               {{ quiz?.questions?.length || 0 }} вопросов
             </span>
-            <span class="meta-item">
-              <span class="meta-icon">Время:</span>
-              {{ quizTime }}с на вопрос
-            </span>
+  
             <span :class="['meta-item', 'difficulty', quiz?.difficulty]">
               {{ getDifficultyLabel(quiz?.difficulty) }}
             </span>

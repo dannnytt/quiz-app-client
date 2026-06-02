@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap'); */
 
 * {
   margin: 0;
@@ -41,59 +41,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   transition: background 0.3s, color 0.3s;
-}
-
-/* ===== ANIMATED BACKGROUND (адаптировано под светлую тему) ===== */
-.bg-animation {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.bg-animation .circle {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.04; /* ✅ Меньшая непрозрачность, чтобы не мешать чтению */
-  animation: floatCircle 20s infinite ease-in-out;
-}
-
-.bg-animation .circle:nth-child(1) {
-  width: 500px;
-  height: 500px;
-  background: var(--primary);
-  top: -100px;
-  left: -100px;
-  animation-duration: 25s;
-}
-.bg-animation .circle:nth-child(2) {
-  width: 300px;
-  height: 300px;
-  background: var(--accent);
-  top: 50%;
-  right: -80px;
-  animation-duration: 20s;
-  animation-delay: -5s;
-}
-.bg-animation .circle:nth-child(3) {
-  width: 400px;
-  height: 400px;
-  background: var(--secondary);
-  bottom: -100px;
-  left: 30%;
-  animation-duration: 30s;
-  animation-delay: -10s;
-}
-
-@keyframes floatCircle {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(50px, -50px) scale(1.1); }
-  50% { transform: translate(-30px, 30px) scale(0.9); }
-  75% { transform: translate(40px, 20px) scale(1.05); }
 }
 
 /* ===== CONTAINER ===== */
@@ -182,12 +129,19 @@ body {
 }
 
 .create-btn {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: #fff;
-}
-.create-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .stats-btn {
@@ -195,10 +149,10 @@ body {
   color: var(--dark);
   border: 1px solid var(--border);
 }
-.stats-btn:hover {
+/* .stats-btn:hover {
   background: var(--card-bg2);
   border-color: var(--primary);
-}
+} */
 
 .section-title {
   font-size: 1.1rem;
@@ -219,34 +173,12 @@ body {
   border-radius: 20px;
   padding: 28px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
 }
 
-.quiz-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-}
-.quiz-card.my-quiz::before {
-  background: linear-gradient(90deg, var(--secondary), var(--success));
-}
-
-.quiz-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--primary);
-  box-shadow: 0 12px 30px rgba(108, 92, 231, 0.1);
-}
-.quiz-card.my-quiz:hover {
-  border-color: var(--secondary);
-  box-shadow: 0 12px 30px rgba(0, 206, 201, 0.1);
-}
 
 .quiz-card .card-top {
   display: flex;
@@ -294,15 +226,15 @@ body {
   height: 32px;
   border: none;
   border-radius: 8px;
-  background: var(--card-bg2);
+  /* background: var(--card-bg2); */
   color: var(--dark);
   cursor: pointer;
   font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
-  border: 1px solid var(--border);
+  /* transition: all 0.2s; */
+  /* border: 1px solid var(--border); */
 }
 .quiz-card .card-actions button:hover {
   background: var(--primary);
@@ -310,9 +242,9 @@ body {
   border-color: var(--primary);
 }
 .quiz-card .card-actions .delete-btn:hover {
-  background: var(--danger);
-  color: #fff;
-  border-color: var(--danger);
+  /* background: var(--danger); */
+  /* color: #fff; */
+  /* border-color: var(--danger); */
 }
 
 .difficulty {
@@ -322,9 +254,6 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
 }
-.difficulty.easy { background: rgba(0, 184, 148, 0.12); color: #00896b; }
-.difficulty.medium { background: rgba(253, 203, 110, 0.15); color: #d49e00; }
-.difficulty.hard { background: rgba(225, 112, 85, 0.12); color: #c05030; }
 
 /* ===== QUIZ SCREEN ===== */
 .quiz-header {
@@ -372,28 +301,26 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 184, 148, 0.1);
   padding: 8px 14px;
   border-radius: 12px;
   font-weight: 600;
   font-size: 0.9rem;
-  color: #00896b;
 }
 
 .timer-display {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(253, 203, 110, 0.15);
+  /* background: rgba(253, 203, 110, 0.15); */
   padding: 8px 14px;
   border-radius: 12px;
   font-weight: 600;
   font-size: 0.9rem;
-  color: #d49e00;
+  /* color: #d49e00; */
 }
 .timer-display.warning {
-  color: #c05030;
-  background: rgba(225, 112, 85, 0.1);
+  /* color: #c05030; */
+  /* background: rgba(225, 112, 85, 0.1); */
 }
 
 /* Progress Bar */
@@ -407,7 +334,7 @@ body {
 }
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
   border-radius: 10px;
   transition: width 0.5s ease;
 }
@@ -589,7 +516,7 @@ body {
 .score-circle-inner .score-number {
   font-size: 2.5rem;
   font-weight: 900;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -624,9 +551,9 @@ body {
   color: var(--gray);
   margin-top: 4px;
 }
-.stat-card.correct-stat .stat-value { color: var(--success); }
-.stat-card.wrong-stat .stat-value { color: var(--danger); }
-.stat-card.time-stat .stat-value { color: #d49e00; }
+.stat-card.correct-stat .stat-value {}
+.stat-card.wrong-stat .stat-value { }
+.stat-card.time-stat .stat-value { }
 
 .results-actions {
   display: flex;

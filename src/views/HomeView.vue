@@ -1,6 +1,6 @@
 <template>
   <div v-if="store.loading" class="loading">Загрузка квизов...</div>
-  <div v-else-if="store.error" class="error">❌ {{ store.error }}</div>
+  <div v-else-if="store.error" class="error">{{ store.error }}</div>
   
   <template v-else>
     <div class="home-actions">

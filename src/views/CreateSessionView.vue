@@ -53,7 +53,7 @@
       <div class="players-section">
         <div class="section-header">
           <h4>Игроки</h4>
-          <span class="players-count">{{ players.length }}</span>
+          <!-- <span class="players-count">{{ players.length }}</span> -->
         </div>
         
         <div class="players-list">
@@ -88,7 +88,6 @@
         >
           {{ starting ? 'Запуск...' : 'Начать игру' }}
         </button>
-        <p class="hint">Минимум 1 игрок для старта</p>
       </div>
 
       <div v-else class="player-waiting">
@@ -398,7 +397,7 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -447,9 +446,9 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   font-weight: 600;
   font-size: 0.75rem;
 }
-.difficulty.easy { background: rgba(0, 184, 148, 0.12); color: #00896b; }
-.difficulty.medium { background: rgba(253, 203, 110, 0.15); color: #b48600; }
-.difficulty.hard { background: rgba(225, 112, 85, 0.12); color: #c05030; }
+.difficulty.easy {}
+.difficulty.medium {}
+.difficulty.hard {}
 
 .players-section {
   background: var(--card-bg);
@@ -499,8 +498,8 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   border-color: var(--primary);
 }
 .player-item.is-you {
-  background: rgba(0, 184, 148, 0.08);
-  border-color: var(--success);
+  /* background: rgba(0, 184, 148, 0.08); */
+  /* border-color: var(--success); */
 }
 .player-item.empty {
   opacity: 0.6;
@@ -511,7 +510,7 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -568,7 +567,7 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   width: 100%;
   max-width: 280px;
   padding: 14px 28px;
-  background: linear-gradient(135deg, var(--success), #00a388);
+  background: var(--primary);
   border: none;
   border-radius: 14px;
   color: #fff;
@@ -576,15 +575,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
-}
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 184, 148, 0.25);
-}
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
 }
 
 .hint {

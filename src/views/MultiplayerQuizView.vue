@@ -19,13 +19,13 @@
       </div>
       
       <div class="header-right">
-        <span class="current-nickname" :title="myNickname">
-          {{ myNickname || 'Игрок' }}
-        </span>
+        <!-- <span class="current-nickname" :title="myNickname">
+          Ник: {{ myNickname || 'Игрок' }}
+        </span> -->
         
-        <div class="role-badge" :class="isHost ? 'badge-host' : 'badge-player'">
+        <!-- <div class="role-badge" :class="isHost ? 'badge-host' : 'badge-player'">
           {{ isHost ? 'Хост' : 'Игрок' }}
-        </div>
+        </div> -->
         <div class="score-display"> Счет: {{ myScore }}</div>
       </div>
     </div>
@@ -54,7 +54,6 @@
         <button class="btn-next-host" @click="nextQuestionHost" :disabled="advancing">
           {{ advancing ? 'Переход...' : (isLastQuestion ? 'Завершить игру' : 'Следующий вопрос') }}
         </button>
-        <p class="host-hint">Хост управляет игрой. Игроки отвечают самостоятельно.</p>
       </div>
     </div>
 
@@ -367,8 +366,8 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .role-badge { padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; }
-.badge-host { background: rgba(253, 203, 110, 0.2); color: var(--warning); border: 1px solid rgba(253, 203, 110, 0.4); }
-.badge-player { background: rgba(0, 184, 148, 0.2); color: var(--success); border: 1px solid rgba(0, 184, 148, 0.4); }
+.badge-host { border: 1px solid; }
+.badge-player { border: 1px solid; }
 
 .host-panel { max-width: 600px; margin: 30px auto; text-align: center; }
 .question-preview { background: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; text-align: left; border: 1px solid rgba(255,255,255,0.06); }
@@ -377,7 +376,7 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 .correct-indicator {
   margin-left: auto;
   padding: 4px 10px;
-  background: rgba(0, 184, 148, 0.15);
+  /* background: rgba(0, 184, 148, 0.15); */
   border: 1px solid rgba(0, 184, 148, 0.4);
   border-radius: 20px;
   color: #00896b;
@@ -393,7 +392,7 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 }
 .host-controls { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .player-counter { display: flex; align-items: center; gap: 8px; color: var(--gray); font-size: 0.95rem; }
-.btn-next-host { width: 100%; max-width: 400px; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; border-radius: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+.btn-next-host { width: 100%; max-width: 400px; padding: 16px; background: var(--primary); border: none; border-radius: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
 .btn-next-host:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3); }
 .btn-next-host:disabled { opacity: 0.6; cursor: not-allowed; }
 .host-hint { font-size: 0.85rem; color: var(--gray); margin-top: 8px; }
@@ -424,10 +423,10 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 
 .current-nickname {
   font-weight: 600;
-  font-size: 0.85rem;
+  /* font-size: 0.85rem; */
   color: #3b3a3a;
-  background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(253, 121, 168, 0.2));
-  border: 1px solid rgba(108, 92, 231, 0.3);
+  /* background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(253, 121, 168, 0.2)); */
+  /* border: 1px solid; */
   padding: 6px 12px;
   border-radius: 20px;
   white-space: nowrap;

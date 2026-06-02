@@ -31,10 +31,8 @@
       </div>
 
       <div v-if="isHost" class="session-code-card">
-        <p>Поделитесь кодом с друзьями:</p>
         <div class="code-display" @click="copyCode">
           {{ hostCode }}
-          <span class="copy-hint">Нажми, чтобы скопировать</span>
         </div>
       </div>
 
@@ -73,11 +71,9 @@
         >
           {{ starting ? 'Запуск...' : 'Начать игру' }}
         </button>
-        <p class="hint">Минимум 1 игрок для старта</p>
       </div>
 
       <div v-else class="player-status">
-        <p>Ожидайте, пока <strong>{{ hostNickname }}</strong> начнёт игру...</p>
         <button class="btn-leave" @click="leaveSession">
           Выйти из сессии
         </button>
@@ -333,16 +329,16 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 0.75rem;
 }
-.difficulty.easy { background: rgba(0,184,148,0.15); color: var(--success); }
-.difficulty.medium { background: rgba(253,203,110,0.15); color: var(--warning); }
-.difficulty.hard { background: rgba(225,112,85,0.15); color: var(--danger); }
+.difficulty.easy { }
+.difficulty.medium { }
+.difficulty.hard { }
 
 .session-code-card {
   text-align: center;
   margin-bottom: 24px;
   padding: 20px;
-  background: rgba(108, 92, 231, 0.08);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  /* background: rgba(108, 92, 231, 0.08); */
+  /* border: 1px solid rgba(108, 92, 231, 0.2); */
   border-radius: 16px;
 }
 
@@ -416,11 +412,11 @@ onUnmounted(() => {
 
 .player-card.is-you {
   border-color: var(--success);
-  background: rgba(0, 184, 148, 0.08);
+  /* background: rgba(0, 184, 148, 0.08); */
 }
 
 .player-card.is-host {
-  border-color: var(--warning);
+  /* border-color: var(--warning); */
 }
 
 .player-card.empty {
@@ -432,7 +428,7 @@ onUnmounted(() => {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -470,12 +466,12 @@ onUnmounted(() => {
   font-weight: 600;
 }
 .badge.host {
-  background: rgba(253, 203, 110, 0.2);
-  color: var(--warning);
+  /* background: rgba(253, 203, 110, 0.2); */
+  /* color: var(--warning); */
 }
 .badge.you {
-  background: rgba(0, 184, 148, 0.2);
-  color: var(--success);
+  /* background: rgba(0, 184, 148, 0.2); */
+  /* color: var(--success); */
 }
 
 .host-actions {
@@ -517,7 +513,7 @@ onUnmounted(() => {
   text-align: center;
   margin-top: 30px;
   padding: 24px;
-  background: rgba(253, 203, 110, 0.08);
+  /* background: rgba(253, 203, 110, 0.08); */
   border-radius: 16px;
 }
 

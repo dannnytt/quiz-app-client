@@ -21,7 +21,7 @@
         <div :class="['timer-display', { warning: timeLeft <= 5 }]">
           Таймер: <span>{{ timeLeft }}с</span>
         </div>
-        <div class="score-display"><span>{{ score }}</span></div>
+        <div class="score-display"><span>Счет: {{ score }}</span></div>
       </div>
     </div>
 

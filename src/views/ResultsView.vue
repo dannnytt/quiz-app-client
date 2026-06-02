@@ -1,7 +1,6 @@
 <template>
   <div class="results-container">
-    <div class="results-title">{{ title }}</div>
-    <div class="results-subtitle">{{ subtitle }}</div>
+    <div class="results-title">Результаты</div>
 
     <div class="score-circle" :style="{ '--score-pct': pct + '%' }">
       <div class="score-circle-inner">
@@ -34,21 +33,6 @@ const data = computed(() => store.lastResult || { correct: 0, total: 1, time: 0,
 const pct = computed(() => {
   if (!data.value.total) return 0
   return Math.round((data.value.correct / data.value.total) * 100)
-})
-
-const title = computed(() => {
-  if (pct.value === 100) return 'Идеально!'
-  if (pct.value >= 80) return 'Отлично!'
-  if (pct.value >= 60) return 'Хорошо!'
-  if (pct.value >= 40) return 'Так себе'
-  return 'Не расстраивайся!'
-})
-const subtitle = computed(() => {
-  if (pct.value === 100) return 'Ты ответил на все вопросы верно!'
-  if (pct.value >= 80) return 'Потрясающий результат!'
-  if (pct.value >= 60) return 'Неплохо, но есть куда расти!'
-  if (pct.value >= 40) return 'Попробуй ещё раз!'
-  return 'Практика делает мастера!'
 })
 
 const retryQuiz = () => {

@@ -163,18 +163,18 @@ async function joinSession() {
 .btn-join {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   border: none;
   border-radius: 14px;
   color: #fff;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
+  /* transition: all 0.3s; */
   margin-top: 10px;
 }
 
-.btn-join:hover:not(:disabled) {
+/* .btn-join:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
 }
@@ -182,7 +182,7 @@ async function joinSession() {
 .btn-join:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
+} */
 
 .error {
   margin-top: 20px;

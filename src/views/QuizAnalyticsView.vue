@@ -348,7 +348,7 @@ onMounted(loadAnalytics)
   display: block;
   font-size: 2rem;
   font-weight: 800;
-  color: var(--primary);
+  /* color: var(--primary); */
 }
 
 .metric-label {
@@ -505,20 +505,20 @@ td {
 .accuracy-badge {
   padding: 4px 10px;
   border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  /* font-size: 0.8rem; */
+  /* font-weight: 600; */
 }
 .accuracy-badge.high { 
-  background: rgba(0, 184, 148, 0.12); 
-  color: #00896b; 
+  /* background: rgba(0, 184, 148, 0.12);  */
+  /* color: #00896b;  */
 }
 .accuracy-badge.medium { 
-  background: rgba(253, 203, 110, 0.15); 
-  color: #d49e00; 
+  /* background: rgba(253, 203, 110, 0.15);  */
+  /* color: #d49e00;  */
 }
 .accuracy-badge.low { 
-  background: rgba(225, 112, 85, 0.12); 
-  color: #c05030; 
+  /* background: rgba(225, 112, 85, 0.12);  */
+  /* color: #c05030;  */
 }
 
 @media (max-width: 768px) {

@@ -568,7 +568,6 @@ onMounted(loadQuiz)
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
-  transition: all 0.3s;
   border: none;
 }
 
@@ -584,11 +583,11 @@ onMounted(loadQuiz)
 }
 
 .btn-save {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: var(--primary);
   color: #fff;
 }
 
-.btn-save:hover:not(:disabled) {
+/* .btn-save:hover:not(:disabled) {
   box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
   transform: translateY(-2px);
 }
@@ -596,7 +595,7 @@ onMounted(loadQuiz)
 .btn-save:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
+} */
 
 @media (max-width: 600px) {
   .form-row {

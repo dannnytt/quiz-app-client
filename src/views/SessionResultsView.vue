@@ -244,8 +244,8 @@ onMounted(init)
 }
 
 .winner-card {
-  background: linear-gradient(135deg, rgba(253, 203, 110, 0.12), rgba(108, 92, 231, 0.08));
-  border: 2px solid rgba(253, 203, 110, 0.4);
+  /* background: linear-gradient(135deg, rgba(253, 203, 110, 0.12), rgba(108, 92, 231, 0.08)); */
+  /* border: 2px solid rgba(253, 203, 110, 0.4); */
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 30px;
@@ -260,7 +260,7 @@ onMounted(init)
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--warning), #f6ad55);
+  /* background: linear-gradient(135deg, var(--warning), #f6ad55); */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,13 +333,13 @@ onMounted(init)
 }
 
 .leaderboard-item.is-you {
-  background: rgba(0, 184, 148, 0.08);
-  border: 1px solid var(--success);
+  /* background: rgba(0, 184, 148, 0.08); */
+  /* border: 1px solid var(--success); */
 }
 
 .leaderboard-item.top-3 {
-  background: rgba(253, 203, 110, 0.08);
-  border-color: rgba(253, 203, 110, 0.3);
+  /* background: rgba(253, 203, 110, 0.08); */
+  /* border-color: rgba(253, 203, 110, 0.3); */
 }
 
 .rank {
@@ -347,9 +347,9 @@ onMounted(init)
   font-size: 1.1rem;
   color: var(--dark);
 }
-.rank.gold { color: #b48600; }
+/* .rank.gold { color: #b48600; }
 .rank.silver { color: #757575; }
-.rank.bronze { color: #9c6b3f; }
+.rank.bronze { color: #9c6b3f; } */
 
 .player-cell {
   display: flex;
@@ -415,10 +415,10 @@ onMounted(init)
   font-size: 0.9rem;
   color: var(--dark);
 }
-.correct-value.excellent { color: #00896b; }
+/* .correct-value.excellent { color: #00896b; }
 .correct-value.good { color: #1976d2; }
 .correct-value.average { color: #b48600; }
-.correct-value.poor { color: #c05030; }
+.correct-value.poor { color: #c05030; } */
 
 .my-stats {
   background: var(--card-bg);
@@ -454,7 +454,7 @@ onMounted(init)
   display: block;
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--primary);
+  /* color: var(--primary); */
 }
 
 .stat-label {
@@ -497,19 +497,12 @@ onMounted(init)
   color: var(--dark);
   border: 1px solid var(--border);
 }
-.btn-home:hover {
-  background: var(--card-bg2);
-  border-color: var(--primary);
-}
 
 .btn-new-session {
-  background: linear-gradient(135deg, var(--success), #00a388);
+  background: var(--primary);
   color: #fff;
 }
-.btn-new-session:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 184, 148, 0.2);
-}
+
 
 .share-section {
   margin-top: 10px;

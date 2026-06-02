@@ -108,16 +108,16 @@ const deleteQuiz = async (event) => {
   border-radius: 20px;
   padding: 24px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
 }
 
 .quiz-card:hover {
-  transform: translateY(-4px);
+  /* transform: translateY(-4px); */
   border-color: var(--primary);
-  box-shadow: 0 12px 30px rgba(108, 92, 231, 0.1);
+  /* box-shadow: 0 12px 30px rgba(0,0,0,0.04); */
 }
 
 .card-actions {
@@ -135,7 +135,7 @@ const deleteQuiz = async (event) => {
   min-width: 85px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: var(--card-bg2);
+  /* background: var(--card-bg2); */
   color: var(--dark);             
   font-size: 0.8rem;
   font-weight: 600;
@@ -148,30 +148,30 @@ const deleteQuiz = async (event) => {
   gap: 4px;
 }
 
-.action-btn:hover {
+/* .action-btn:hover {
   color: #fff;                     
   transform: translateY(-1px);
-}
+} */
 
-.analytics-btn:hover {
+/* .analytics-btn:hover {
   background: var(--primary);
   border-color: var(--primary);
-}
+} */
 
-.edit-btn:hover {
+/* .edit-btn:hover {
   background: var(--warning);
   border-color: var(--warning);
-}
+} */
 
-.delete-btn:hover {
+/* .delete-btn:hover {
   background: var(--danger);
   border-color: var(--danger);
-}
+} */
 
-.online-btn:hover {
+/* .online-btn:hover {
   background: var(--secondary);
   border-color: var(--secondary);
-}
+} */
 
 .card-top {
   margin-bottom: 16px;
@@ -204,11 +204,11 @@ const deleteQuiz = async (event) => {
   padding: 3px 10px;
   border-radius: 20px;
   font-weight: 600;
-  font-size: 0.75rem;
+  /* font-size: 0.75rem; */
 }
-.difficulty.easy { background: rgba(0, 184, 148, 0.12); color: #00896b; }
-.difficulty.medium { background: rgba(253, 203, 110, 0.15); color: #b48600; }
-.difficulty.hard { background: rgba(225, 112, 85, 0.12); color: #c05030; }
+.difficulty.easy { background: rgba(0, 184, 148, 0.12); }
+.difficulty.medium { background: rgba(253, 203, 110, 0.15);}
+.difficulty.hard { background: rgba(225, 112, 85, 0.12); }
 
 @media (max-width: 500px) {
   .card-actions {

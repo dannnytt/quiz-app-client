@@ -44,6 +44,10 @@
           <button v-if="form.questions.length > 1" type="button" class="q-remove" @click="removeQuestion(idx)">✕</button>
         </div>
         <div class="form-group"><label>Текст вопроса</label><input v-model="q.text" required maxlength="200" placeholder="Введите вопрос..."></div>
+        <div class="form-group">
+          <label>Изображение вопроса (необязательно)</label>
+          <ImageUpload v-model="q.image" placeholder="Загрузить изображение" />
+        </div>
         <div v-for="(opt, oi) in q.options" :key="oi" class="option-editor">
           <span class="option-label">{{ String.fromCharCode(65 + oi) }}</span>
           <input v-model="q.options[oi]" required maxlength="100" placeholder="Вариант">
@@ -116,3 +120,18 @@ async function saveQuiz() {
   }
 }
 </script>
+
+<style scoped>
+.question-image-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.question-image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+</style>

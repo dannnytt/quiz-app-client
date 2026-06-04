@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { api } from '../api'
+import { api, getImageUrl } from '../api'
 
 const props = defineProps({
   modelValue: String,
@@ -33,11 +33,21 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const preview = ref(props.modelValue || '')
+const preview = ref('')
 
-watch(() => props.modelValue, (newVal) => {
-  preview.value = newVal || ''
-})
+// ✅ НОВОЕ: Следим за изменением modelValue и загружаем существующее изображение
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal) {
+      // Преобразуем относительный путь в полный URL
+      preview.value = getImageUrl(newVal)
+    } else {
+      preview.value = ''
+    }
+  },
+  { immediate: true } // Вызывается сразу при монтировании
+)
 
 async function handleFileSelect(event) {
   const file = event.target.files[0]
@@ -49,7 +59,7 @@ async function handleFileSelect(event) {
     return
   }
   
-  // Предпросмотр
+  // Предпросмотр через base64 (для мгновенного отображения)
   const reader = new FileReader()
   reader.onload = (e) => {
     preview.value = e.target.result
@@ -60,11 +70,16 @@ async function handleFileSelect(event) {
   try {
     const result = await api.uploadImage(file)
     emit('update:modelValue', result.url)
+    // После загрузки устанавливаем полный URL для предпросмотра
+    preview.value = getImageUrl(result.url)
   } catch (e) {
     console.error('Upload failed:', e)
     alert('Ошибка загрузки изображения')
     preview.value = ''
   }
+  
+  // Сброс input для возможности повторной загрузки того же файла
+  event.target.value = ''
 }
 
 function removeImage() {
@@ -116,6 +131,7 @@ function removeImage() {
 .preview-container {
   position: relative;
   display: inline-block;
+  width: 100%;
 }
 
 .preview-image {
@@ -123,6 +139,8 @@ function removeImage() {
   max-height: 200px;
   border-radius: 12px;
   border: 1px solid var(--border);
+  display: block;
+  margin: 0 auto;
 }
 
 .remove-btn {
@@ -132,7 +150,7 @@ function removeImage() {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(225, 112, 85, 0.9);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -144,6 +162,6 @@ function removeImage() {
 }
 
 .remove-btn:hover {
-  background: rgba(225, 112, 85, 0.9);
+  background: rgba(225, 112, 85, 1);
 }
 </style>

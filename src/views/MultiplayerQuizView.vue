@@ -38,7 +38,12 @@
       <div class="question-preview">
         
         <div v-if="currentQuestion?.image" class="question-image-container">
-          <img :src="currentQuestion.image" alt="Question image" class="question-image" />
+          <img 
+            :src="getImageUrl(currentQuestion.image)" 
+            alt="Question image" 
+            class="question-image"
+            @error="handleImageError"
+          />
         </div>
 
         <h3 class="question-text">{{ currentQuestion?.q || currentQuestion?.text || 'Загрузка...' }}</h3>
@@ -66,7 +71,12 @@
       <div class="question-container" ref="qContainer">
         
         <div v-if="currentQuestion?.image" class="question-image-container">
-          <img :src="currentQuestion.image" alt="Question image" class="question-image" />
+          <img 
+            :src="getImageUrl(currentQuestion.image)" 
+            alt="Question image" 
+            class="question-image"
+            @error="handleImageError"
+          />
         </div>
         <div class="question-text">{{ currentQuestion?.q || currentQuestion?.text }}</div>
         
@@ -122,6 +132,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
+import { getImageUrl } from '../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -207,7 +218,8 @@ async function loadQuiz(quizId) {
     q: qs.text || qs.q || '',
     options: Array.isArray(qs.options) ? qs.options : [],
     correct: typeof qs.correct === 'number' ? qs.correct : 0,
-    explanation: qs.explanation || ''
+    explanation: qs.explanation || '',
+    image: qs.image || null
   }))
 }
 

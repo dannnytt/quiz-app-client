@@ -24,6 +24,11 @@
         <h3>Основная информация</h3>
         
         <div class="form-group">
+          <label>Обложка квиза (необязательно)</label>
+          <ImageUpload v-model="form.cover_image" placeholder="Загрузить обложку" />
+        </div>
+        
+        <div class="form-group">
           <label>Название</label>
           <input v-model="form.title" required maxlength="100" placeholder="Название квиза">
         </div>
@@ -74,6 +79,11 @@
               placeholder="Введите вопрос..."
             >
           </div>
+
+          <div class="form-group">
+            <label>Изображение вопроса (необязательно)</label>
+            <ImageUpload v-model="q.image" placeholder="Загрузить изображение" />
+          </div>
           
           <div v-for="(opt, oi) in q.options" :key="oi" class="option-editor">
             <span class="option-label">{{ String.fromCharCode(65 + oi) }}</span>
@@ -123,6 +133,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
+import ImageUpload from './ImageUpload.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -299,6 +310,19 @@ onMounted(loadQuiz)
 </script>
 
 <style scoped>
+
+.question-image-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.question-image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
 .quiz-loading,
 .quiz-error {
   display: flex;

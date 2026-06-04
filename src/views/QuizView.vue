@@ -32,7 +32,12 @@
     <div class="question-container" ref="qContainer">
       
       <div v-if="currentQ?.image" class="question-image-container">
-        <img :src="currentQ.image" alt="Question image" class="question-image" />
+        <img 
+          :src="getImageUrl(currentQ.image)" 
+          alt="Question image" 
+          class="question-image"
+          @error="handleImageError"
+        />
       </div>
       
       <div class="question-text">{{ currentQ?.q || currentQ?.text }}</div>
@@ -74,6 +79,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
+import { getImageUrl } from '../api'
 
 const route = useRoute()
 const router = useRouter()

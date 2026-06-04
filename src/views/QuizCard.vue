@@ -1,6 +1,15 @@
 <template>
   <div :class="['quiz-card', { 'my-quiz': isCustom }]" @click="startQuiz">
     
+     <div v-if="quiz.cover_image" class="card-cover">
+      <img 
+        :src="getImageUrl(quiz.cover_image)" 
+        :alt="quiz.title" 
+        class="cover-image"
+        @error="handleImageError"
+      />
+    </div>
+
     <div class="card-actions" v-if="isCustom" @click.stop>
       <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
         Аналитика
@@ -44,6 +53,12 @@ import { defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
+import { getImageUrl } from '../api'
+
+function handleImageError(e) {
+  console.error('Failed to load image:', e.target.src)
+  e.target.style.display = 'none'
+}
 
 const DIFFICULTY_LABELS = {
   easy: 'Лёгкий',
@@ -101,6 +116,20 @@ const deleteQuiz = async (event) => {
 </script>
 
 <style scoped>
+
+.card-cover {
+  margin: -24px -24px 16px -24px;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+}
+
+.cover-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
 .quiz-card {
   background: var(--card-bg);
   border: 1px solid var(--border);

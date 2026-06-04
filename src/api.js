@@ -1,5 +1,29 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+export { API_BASE }
+
+export function getImageUrl(path) {
+  if (!path) {
+    console.log('getImageUrl: no path provided')
+    return ''
+  }
+  console.log('getImageUrl input:', path)
+  
+  // Если уже абсолютный URL
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    console.log('getImageUrl: absolute URL, returning as is')
+    return path
+  }
+  
+  // Убедитесь, что путь начинается с /
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const fullUrl = `${API_BASE}${normalizedPath}`
+  console.log('getImageUrl full URL:', fullUrl)
+  
+  return fullUrl
+}
+
+
 async function request(endpoint, options = {}) {
   const res = await fetch(`${API_BASE}${endpoint}`, {
     headers: { 'Content-Type': 'application/json', ...options.headers },
@@ -48,5 +72,18 @@ export const api = {
   getLeaderboard: (sessionId) => request(`/api/sessions/${sessionId}/leaderboard`),
   
   getSessionPlayers: (sessionId) => request(`/api/sessions/${sessionId}/players`),
-  getQuizAnalytics: (quizId) => request(`/api/quizzes/${quizId}/analytics`)
+  getQuizAnalytics: (quizId) => request(`/api/quizzes/${quizId}/analytics`),
+  
+  uploadImage: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    return fetch(`${API_BASE}/api/upload/image`, {
+      method: 'POST',
+      body: formData
+    }).then(res => {
+      if (!res.ok) throw new Error('Upload failed')
+      return res.json()
+    })
+  },
 }

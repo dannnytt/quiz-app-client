@@ -179,13 +179,16 @@ async function loadQuiz() {
     form.emoji = found.emoji || '📝'
     form.difficulty = found.difficulty || 'medium'
     form.timePerQuestion = found.time_per_question || found.timePerQuestion || 30
+    form.cover_image = found.cover_image || null
+
     
     form.questions = (found.questions || []).map(q => ({
       _uid: questionUid++,
       text: q.text || q.q || '',
       options: Array.isArray(q.options) ? [...q.options] : ['', '', '', ''],
       correct: typeof q.correct === 'number' ? q.correct : 0,
-      explanation: q.explanation || ''
+      explanation: q.explanation || '',
+      image: q.image
     }))
     
     if (form.questions.length === 0) {
@@ -269,11 +272,13 @@ async function updateQuiz() {
       difficulty: form.difficulty,
       time_per_question: form.timePerQuestion,
       isCustom: true,
+      cover_image: form.cover_image,
       questions: form.questions.map(q => ({
         text: q.text.trim(),
         options: q.options.map(o => o.trim()),
         correct: q.correct,
-        explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`
+        explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`,
+        image: q.image
       }))
     }
     

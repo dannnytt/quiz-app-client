@@ -36,6 +36,11 @@
 
     <div v-if="isHost && sessionStatus === 'active'" class="host-panel">
       <div class="question-preview">
+        
+        <div v-if="currentQuestion?.image" class="question-image-container">
+          <img :src="currentQuestion.image" alt="Question image" class="question-image" />
+        </div>
+
         <h3 class="question-text">{{ currentQuestion?.q || currentQuestion?.text || 'Загрузка...' }}</h3>
         <div class="options-preview">
           <div v-for="(opt, i) in currentQuestion?.options" :key="i" class="option-preview">
@@ -59,6 +64,10 @@
 
     <div v-else-if="!isHost && sessionStatus === 'active'" class="player-panel">
       <div class="question-container" ref="qContainer">
+        
+        <div v-if="currentQuestion?.image" class="question-image-container">
+          <img :src="currentQuestion.image" alt="Question image" class="question-image" />
+        </div>
         <div class="question-text">{{ currentQuestion?.q || currentQuestion?.text }}</div>
         
         <div class="options-list">
@@ -360,6 +369,20 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
 </script>
 
 <style scoped>
+
+.question-image-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.question-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+
 .quiz-loading, .quiz-error { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; text-align: center; padding: 40px 20px; color: var(--gray); }
 .quiz-error { color: var(--danger); }
 .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(108, 92, 231, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }

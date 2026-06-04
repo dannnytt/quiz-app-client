@@ -21,15 +21,15 @@ export const store = reactive({
         isCustom: q.is_custom ?? q.isCustom ?? false,
         timePerQuestion: q.time_per_question ?? q.timePerQuestion ?? 30,
         created_at: q.created_at,
+        cover_image: q.cover_image || null,  // ✅ ДОБАВЛЕНО
         questions: (q.questions || []).map(qs => ({
           q: qs.text || qs.q || '',
           options: Array.isArray(qs.options) ? qs.options : [],
           correct: typeof qs.correct === 'number' ? qs.correct : 0,
-          explanation: qs.explanation || ''
+          explanation: qs.explanation || '',
+          image: qs.image || null  // ✅ ДОБАВЛЕНО
         }))
       }))
-
-      
     } catch (e) {
       console.error('Store init error:', e)
       this.error = e.message || 'Не удалось загрузить данные'
@@ -45,11 +45,13 @@ export const store = reactive({
       emoji: quiz.emoji,
       difficulty: quiz.difficulty,
       time_per_question: quiz.timePerQuestion,
+      cover_image: quiz.cover_image,  // ✅ ДОБАВЛЕНО
       questions: quiz.questions.map(q => ({
         text: q.q || q.text,
         options: q.options,
         correct: q.correct,
-        explanation: q.explanation
+        explanation: q.explanation,
+        image: q.image || null  // ✅ ДОБАВЛЕНО
       }))
     }
     await api.createQuiz(payload)
@@ -63,11 +65,13 @@ export const store = reactive({
       emoji: updated.emoji,
       difficulty: updated.difficulty,
       time_per_question: updated.timePerQuestion,
+      cover_image: updated.cover_image,  // ✅ ДОБАВЛЕНО
       questions: updated.questions.map(q => ({
         text: q.text || q.q,
         options: q.options,
         correct: q.correct,
-        explanation: q.explanation
+        explanation: q.explanation,
+        image: q.image || null  // ✅ ДОБАВЛЕНО
       }))
     }
     await api.updateQuiz(updated.id, payload)
@@ -105,7 +109,6 @@ export const store = reactive({
       }
     }
   },
-
 
   getQuiz(id) {
     return this.quizzes.find(q => q.id === id)

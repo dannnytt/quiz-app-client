@@ -9,6 +9,12 @@
   <form @submit.prevent="saveQuiz">
     <div class="form-section">
       <h3>Основная информация</h3>
+      
+      <div class="form-group">
+        <label>Обложка квиза (необязательно)</label>
+        <ImageUpload v-model="form.cover_image" placeholder="Загрузить обложку" />
+      </div>
+
       <div class="form-group">
         <label>Название</label>
         <input v-model="form.title" required maxlength="50" placeholder="Например: Космос">
@@ -60,15 +66,16 @@ import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
+import ImageUpload from '../views/ImageUpload.vue'
 
 const router = useRouter()
 const form = reactive({
-  title: '', desc: '', difficulty: 'medium', timePerQuestion: 30,
+  title: '', desc: '', difficulty: 'medium', timePerQuestion: 30, cover_image: null,
   questions: [createEmptyQuestion(), createEmptyQuestion()]
 })
 
 function createEmptyQuestion() {
-  return { text: '', options: ['', '', '', ''], correct: -1, explanation: '' }
+  return { text: '', options: ['', '', '', ''], correct: -1, explanation: '', image: null }
 }
 
 const addQuestion = () => form.questions.push(createEmptyQuestion())
@@ -89,11 +96,13 @@ async function saveQuiz() {
     difficulty: form.difficulty,
     time_per_question: form.timePerQuestion,
     isCustom: true,
+    cover_image: form.cover_image,
     questions: form.questions.map(q => ({
       text: q.text.trim(),
       options: q.options.map(o => o.trim()),
       correct: q.correct,
-      explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`
+      explanation: q.explanation?.trim() || `Правильный ответ: ${q.options[q.correct]}`,
+      image: q.image
     }))
   }
 

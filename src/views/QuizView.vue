@@ -30,6 +30,11 @@
     </div>
 
     <div class="question-container" ref="qContainer">
+      
+      <div v-if="currentQ?.image" class="question-image-container">
+        <img :src="currentQ.image" alt="Question image" class="question-image" />
+      </div>
+      
       <div class="question-text">{{ currentQ?.q || currentQ?.text }}</div>
       
       <div class="options-list">
@@ -231,6 +236,19 @@ watch(() => route.params.id, async (newId, oldId) => {
 </script>
 
 <style scoped>
+
+.question-image-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.question-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
 .quiz-loading, .quiz-error {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-height: 300px; text-align: center; padding: 40px 20px; color: var(--gray);

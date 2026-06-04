@@ -12,7 +12,6 @@
         class="file-input"
       />
       <div class="upload-placeholder">
-        <span class="upload-icon">📷</span>
         <span class="upload-text">{{ placeholder }}</span>
       </div>
     </label>
@@ -35,42 +34,36 @@ const emit = defineEmits(['update:modelValue'])
 
 const preview = ref('')
 
-// ✅ НОВОЕ: Следим за изменением modelValue и загружаем существующее изображение
 watch(
   () => props.modelValue,
   (newVal) => {
     if (newVal) {
-      // Преобразуем относительный путь в полный URL
       preview.value = getImageUrl(newVal)
     } else {
       preview.value = ''
     }
   },
-  { immediate: true } // Вызывается сразу при монтировании
+  { immediate: true }
 )
 
 async function handleFileSelect(event) {
   const file = event.target.files[0]
   if (!file) return
   
-  // Проверка размера (макс 5MB)
   if (file.size > 5 * 1024 * 1024) {
     alert('Файл слишком большой. Максимум 5MB')
     return
   }
   
-  // Предпросмотр через base64 (для мгновенного отображения)
   const reader = new FileReader()
   reader.onload = (e) => {
     preview.value = e.target.result
   }
   reader.readAsDataURL(file)
   
-  // Загрузка на сервер
   try {
     const result = await api.uploadImage(file)
     emit('update:modelValue', result.url)
-    // После загрузки устанавливаем полный URL для предпросмотра
     preview.value = getImageUrl(result.url)
   } catch (e) {
     console.error('Upload failed:', e)
@@ -78,7 +71,6 @@ async function handleFileSelect(event) {
     preview.value = ''
   }
   
-  // Сброс input для возможности повторной загрузки того же файла
   event.target.value = ''
 }
 

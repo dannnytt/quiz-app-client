@@ -1,7 +1,7 @@
 <template>
   <div :class="['quiz-card', { 'my-quiz': isCustom }]" @click="startQuiz">
     
-     <div v-if="quiz.cover_image" class="card-cover">
+    <div v-if="quiz.cover_image" class="card-cover">
       <img 
         :src="getImageUrl(quiz.cover_image)" 
         :alt="quiz.title" 
@@ -10,7 +10,8 @@
       />
     </div>
 
-    <div class="card-actions" v-if="isCustom" @click.stop>
+    <!-- ✅ Кнопки для админа на кастомных квизах -->
+    <div class="card-actions" v-if="isCustom && isAdminUser" @click.stop>
       <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
         Аналитика
       </button>
@@ -25,7 +26,8 @@
       </button>
     </div>
     
-    <div class="card-actions" v-else @click.stop>
+    <!-- ✅ Кнопки для админа на обычных квизах -->
+    <div class="card-actions" v-else-if="isAdminUser" @click.stop>
       <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
         Аналитика
       </button>
@@ -33,6 +35,13 @@
         Онлайн
       </button>
     </div>
+    
+    <!-- ✅ Для обычных пользователей - только кнопка Играть -->
+    <!-- <div class="card-actions" v-else @click.stop>
+      <button class="action-btn play-btn" @click="startQuiz" title="Играть">
+        ▶ Играть
+      </button>
+    </div> -->
     
     <div class="card-top">
       <div>
@@ -49,11 +58,13 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
-import { getImageUrl } from '../api'
+import { getImageUrl, isAdmin } from '../api'
+
+const isAdminUser = computed(() => isAdmin())
 
 function handleImageError(e) {
   console.error('Failed to load image:', e.target.src)
@@ -116,7 +127,6 @@ const deleteQuiz = async (event) => {
 </script>
 
 <style scoped>
-
 .card-cover {
   margin: -24px -24px 16px -24px;
   overflow: hidden;
@@ -136,16 +146,12 @@ const deleteQuiz = async (event) => {
   border-radius: 20px;
   padding: 24px;
   cursor: pointer;
-  /* transition: all 0.3s ease; */
   position: relative;
   overflow: hidden;
-  /* box-shadow: 0 2px 8px rgba(0,0,0,0.04); */
 }
 
 .quiz-card:hover {
-  /* transform: translateY(-4px); */
   border-color: var(--primary);
-  /* box-shadow: 0 12px 30px rgba(0,0,0,0.04); */
 }
 
 .card-actions {
@@ -163,8 +169,7 @@ const deleteQuiz = async (event) => {
   min-width: 85px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  /* background: var(--card-bg2); */
-  color: var(--dark);             
+  color: var(--dark);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -174,32 +179,23 @@ const deleteQuiz = async (event) => {
   align-items: center;
   justify-content: center;
   gap: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
 }
 
-/* .action-btn:hover {
-  color: #fff;                     
+/* ✅ Стиль для кнопки "Играть" */
+.play-btn {
+  background: linear-gradient(135deg, var(--primary), var(--accent, #fd79a8));
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 0.85rem;
+}
+
+.play-btn:hover {
   transform: translateY(-1px);
-} */
-
-/* .analytics-btn:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-} */
-
-/* .edit-btn:hover {
-  background: var(--warning);
-  border-color: var(--warning);
-} */
-
-/* .delete-btn:hover {
-  background: var(--danger);
-  border-color: var(--danger);
-} */
-
-/* .online-btn:hover {
-  background: var(--secondary);
-  border-color: var(--secondary);
-} */
+  box-shadow: 0 6px 16px rgba(108, 92, 231, 0.3);
+}
 
 .card-top {
   margin-bottom: 16px;
@@ -232,10 +228,9 @@ const deleteQuiz = async (event) => {
   padding: 3px 10px;
   border-radius: 20px;
   font-weight: 600;
-  /* font-size: 0.75rem; */
 }
 .difficulty.easy { background: rgba(0, 184, 148, 0.12); }
-.difficulty.medium { background: rgba(253, 203, 110, 0.15);}
+.difficulty.medium { background: rgba(253, 203, 110, 0.15); }
 .difficulty.hard { background: rgba(225, 112, 85, 0.12); }
 
 @media (max-width: 500px) {

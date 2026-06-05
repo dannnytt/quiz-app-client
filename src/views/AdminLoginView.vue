@@ -47,8 +47,8 @@ async function login() {
   
   try {
     // Проверяем токен, пытаясь выполнить защищённый запрос
-    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/quizzes`, {
-      headers: { 'Authorization': `Bearer ${token.value}` }
+    const response = await fetch(`/api/quizzes`, {
+        headers: { 'Authorization': `Bearer ${token.value}` }
     })
     
     if (!response.ok) {

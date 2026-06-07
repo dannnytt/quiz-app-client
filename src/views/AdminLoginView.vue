@@ -33,7 +33,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { setAdminToken } from '../api'
+import { setAdminToken, api } from '../api'
 
 const router = useRouter()
 const token = ref('')
@@ -46,20 +46,17 @@ async function login() {
   error.value = ''
   
   try {
-    // Проверяем токен, пытаясь выполнить защищённый запрос
-    const response = await fetch(`/api/quizzes`, {
-        headers: { 'Authorization': `Bearer ${token.value}` }
-    })
+    // ✅ Проверяем токен через защищённый эндпоинт /api/auth/verify
+    const isValid = await api.verifyAdminToken(token.value)
     
-    if (!response.ok) {
+    if (!isValid) {
       throw new Error('Неверный токен')
     }
     
     // Токен верный — сохраняем
     setAdminToken(token.value)
-    router.push('/')
-    // const redirect = router.currentRoute.value.query.redirect || '/'
-    // router.push(redirect)
+    const redirect = router.currentRoute.value.query.redirect || '/'
+    router.push(redirect)
   } catch (e) {
     error.value = 'Неверный токен администратора'
   } finally {

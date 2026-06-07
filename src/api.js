@@ -82,7 +82,7 @@ export const api = {
   
   // ✅ НОВЫЙ метод: проверка токена админа
   verifyAdminToken: (token) => {
-    return fetch(`${API_BASE}/api/quizzes`, {
+    return fetch(`${API_BASE}/api/auth/verify`, {
       headers: { 'Authorization': `Bearer ${token}` }
     }).then(res => res.ok)
   },

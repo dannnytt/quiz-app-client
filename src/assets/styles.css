@@ -226,7 +226,7 @@ body {
   height: 32px;
   border: none;
   border-radius: 8px;
-  /* background: var(--card-bg2); */
+  background: var(--card-bg2);
   color: var(--dark);
   cursor: pointer;
   font-size: 0.85rem;

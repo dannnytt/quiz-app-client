@@ -2,38 +2,41 @@ const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export { API_BASE }
 
-// ✅ Токен админа теперь берётся из localStorage
-export function getAdminToken() {
-  return localStorage.getItem('admin_token') || ''
+// ========== АВТОРИЗАЦИЯ ==========
+
+export function getToken() {
+  return localStorage.getItem('auth_token') || ''
 }
 
-export function setAdminToken(token) {
-  localStorage.setItem('admin_token', token)
+export function setToken(token) {
+  localStorage.setItem('auth_token', token)
 }
 
-export function clearAdminToken() {
-  localStorage.removeItem('admin_token')
+export function clearToken() {
+  localStorage.removeItem('auth_token')
+  localStorage.removeItem('auth_user')
 }
 
-// ✅ Админ тот, у кого есть сохранённый токен
-export function isAdmin() {
-  return !!getAdminToken()
+export function getCurrentUser() {
+  const user = localStorage.getItem('auth_user')
+  return user ? JSON.parse(user) : null
 }
 
-export function getImageUrl(path) {
-  if (!path) return ''
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path
-  }
-  return `${API_BASE}${path.startsWith('/') ? path : '/' + path}`
+export function setCurrentUser(user) {
+  localStorage.setItem('auth_user', JSON.stringify(user))
 }
+
+export function isAuthenticated() {
+  return !!getToken()
+}
+
+// ========== БАЗОВЫЙ REQUEST ==========
 
 async function request(endpoint, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers }
   
-  // ✅ Добавляем токен админа для защищённых эндпоинтов
-  const token = getAdminToken()
-  if (token && needsAdminToken(endpoint, options.method)) {
+  const token = getToken()
+  if (token) {
     headers['Authorization'] = `Bearer ${token}`
   }
   
@@ -42,71 +45,79 @@ async function request(endpoint, options = {}) {
     ...options
   })
   
-  // ✅ Если токен невалиден — выходим из админки
+  // Если токен невалиден — выходим
   if (res.status === 401 || res.status === 403) {
-    clearAdminToken()
-    if (window.location.pathname !== '/admin-login') {
-      window.location.href = '/admin-login'
+    clearToken()
+    if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+      window.location.href = '/login'
     }
-    throw new Error('Требуется авторизация администратора')
+    throw new Error('Требуется авторизация')
   }
   
   if (!res.ok) {
     const errorText = await res.text()
-    throw new Error(`API ${res.status}: ${errorText || res.statusText}`)
+    
+    let message = errorText
+    try {
+      const err = JSON.parse(errorText)
+      message = err.detail || err.message || errorText
+    } catch {
+    }
+    
+    throw new Error(message || `API ${res.status}: ${res.statusText}`)
   }
   
   return res.status === 204 ? null : res.json()
 }
 
-// ✅ Определяем, каким эндпоинтам нужен токен
-function needsAdminToken(endpoint, method = 'GET') {
-  // POST /api/quizzes — создание квиза (только админ)
-  if (method === 'POST' && endpoint === '/api/quizzes') {
-    return true
-  }
-  // PUT/DELETE /api/quizzes/... (только админ)
-  if ((method === 'PUT' || method === 'DELETE') && endpoint.includes('/api/quizzes')) {
-    return true
-  }
-  // GET /api/quizzes/.../analytics (только админ)
-  if (endpoint.includes('/analytics')) {
-    return true
-  }
-  // ✅ POST /api/results убран — теперь доступен всем для сохранения результатов одиночного прохождения
-  return false
+// ========== УТИЛИТЫ ==========
+
+export function getImageUrl(path) {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${API_BASE}${path.startsWith('/') ? path : '/' + path}`
 }
 
+// ========== API ==========
+
 export const api = {
-  // ... все ваши существующие методы остаются без изменений ...
+  // --- Авторизация ---
+  register: (email, nickname, password) => request('/api/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, nickname, password })
+  }),
+  login: (email, password) => request('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  }),
+  getMe: () => request('/api/auth/me'),
   
-  // ✅ НОВЫЙ метод: проверка токена админа
-  verifyAdminToken: (token) => {
-    return fetch(`${API_BASE}/api/auth/verify`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    }).then(res => res.ok)
-  },
-  
+  // --- Квизы ---
   getQuizzes: () => request('/api/quizzes'),
-  createQuiz: (data) => request('/api/quizzes', { 
-    method: 'POST', 
-    body: JSON.stringify(data) 
+  getMyQuizzes: () => request('/api/quizzes/my'),
+  createQuiz: (data) => request('/api/quizzes', {
+    method: 'POST',
+    body: JSON.stringify(data)
   }),
-  updateQuiz: (id, data) => request(`/api/quizzes/${id}`, { 
-    method: 'PUT', 
-    body: JSON.stringify(data) 
+  updateQuiz: (id, data) => request(`/api/quizzes/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
   }),
-  deleteQuiz: (id) => request(`/api/quizzes/${id}`, { 
-    method: 'DELETE' 
+  deleteQuiz: (id) => request(`/api/quizzes/${id}`, {
+    method: 'DELETE'
   }),
-  saveResult: (data) => request('/api/results', { 
-    method: 'POST', 
-    body: JSON.stringify(data) 
+  
+  // --- Результаты ---
+  saveResult: (data) => request('/api/results', {
+    method: 'POST',
+    body: JSON.stringify(data)
   }),
+  
+  // --- Изображения ---
   uploadImage: (file) => {
     const formData = new FormData()
     formData.append('file', file)
-    const token = getAdminToken()
+    const token = getToken()
     return fetch(`${API_BASE}/api/upload/image`, {
       method: 'POST',
       headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -116,34 +127,30 @@ export const api = {
       return res.json()
     })
   },
-  createSession: (quizId) => request('/api/sessions', { 
-    method: 'POST', 
-    body: JSON.stringify({ quiz_id: quizId }) 
+  
+  // --- Сессии ---
+  createSession: (quizId) => request('/api/sessions', {
+    method: 'POST',
+    body: JSON.stringify({ quiz_id: quizId })
   }),
   joinSession: (hostCode, nickname) => request('/api/sessions/join', {
     method: 'POST',
     body: JSON.stringify({ host_code: hostCode, nickname })
   }),
   getSessionState: (sessionId) => request(`/api/sessions/${sessionId}`),
-  startSession: (sessionId) => request(`/api/sessions/${sessionId}/start`, { 
-    method: 'POST' 
-  }),
-  nextQuestion: (sessionId) => request(`/api/sessions/${sessionId}/next`, { 
-    method: 'POST' 
-  }),
-  submitAnswer: (sessionId, playerToken, questionIndex, selectedOption, timeLeft) => 
+  startSession: (sessionId) => request(`/api/sessions/${sessionId}/start`, { method: 'POST' }),
+  nextQuestion: (sessionId) => request(`/api/sessions/${sessionId}/next`, { method: 'POST' }),
+  submitAnswer: (sessionId, playerToken, questionIndex, selectedOption, timeLeft) =>
     request(`/api/sessions/${sessionId}/answers`, {
       method: 'POST',
-      body: JSON.stringify({ 
-        player_token: playerToken, 
-        question_index: questionIndex, 
+      body: JSON.stringify({
+        player_token: playerToken,
+        question_index: questionIndex,
         selected_option: selectedOption,
         time_left: timeLeft
       })
     }),
-  finishSession: (sessionId) => request(`/api/sessions/${sessionId}/finish`, { 
-    method: 'POST' 
-  }),
+  finishSession: (sessionId) => request(`/api/sessions/${sessionId}/finish`, { method: 'POST' }),
   getLeaderboard: (sessionId) => request(`/api/sessions/${sessionId}/leaderboard`),
   getSessionPlayers: (sessionId) => request(`/api/sessions/${sessionId}/players`),
   getQuizAnalytics: (quizId) => request(`/api/quizzes/${quizId}/analytics`)

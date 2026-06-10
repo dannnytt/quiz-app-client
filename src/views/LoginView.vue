@@ -1,31 +1,33 @@
 <template>
-  <div class="login-container">
-    <div class="login-card">
-      <h2>Вход для администратора</h2>
-      <p class="hint">Введите секретный токен для доступа к панели управления</p>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2>Вход в аккаунт</h2>
+      <p class="hint">Войдите, чтобы создавать и редактировать квизы</p>
       
       <form @submit.prevent="login">
         <div class="form-group">
-          <label>Токен администратора</label>
-          <input 
-            v-model="token" 
-            type="password"
-            required 
-            placeholder="Введите токен"
-            autocomplete="off"
-          />
+          <label>Email</label>
+          <input v-model="email" type="email" required placeholder="your@email.com" />
+        </div>
+        
+        <div class="form-group">
+          <label>Пароль</label>
+          <input v-model="password" type="password" required placeholder="Ваш пароль" />
         </div>
         
         <div v-if="error" class="error">{{ error }}</div>
         
-        <button type="submit" class="btn-login" :disabled="loading">
-          {{ loading ? 'Проверка...' : 'Войти' }}
+        <button type="submit" class="btn-submit" :disabled="loading">
+          {{ loading ? 'Вход...' : 'Войти' }}
         </button>
       </form>
       
-      <button class="btn-back" @click="$router.push('/')">
-        ← Вернуться к квизам
-      </button>
+      <p class="switch-auth">
+        Нет аккаунта? 
+        <router-link to="/register">Зарегистрироваться</router-link>
+      </p>
+      
+      <button class="btn-back" @click="$router.push('/')">← На главную</button>
     </div>
   </div>
 </template>
@@ -33,10 +35,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { setAdminToken, api } from '../api'
+import { api, setToken, setCurrentUser } from '../api'
+import { store } from '../composables/useQuizStore'
 
 const router = useRouter()
-const token = ref('')
+const email = ref('')
+const password = ref('')
 const error = ref('')
 const loading = ref(false)
 
@@ -46,19 +50,16 @@ async function login() {
   error.value = ''
   
   try {
-    // ✅ Проверяем токен через защищённый эндпоинт /api/auth/verify
-    const isValid = await api.verifyAdminToken(token.value)
+    const response = await api.login(email.value, password.value)
+    setToken(response.access_token)
+    setCurrentUser(response.user)
+    store.currentUser = response.user
+    await store.init()
     
-    if (!isValid) {
-      throw new Error('Неверный токен')
-    }
-    
-    // Токен верный — сохраняем
-    setAdminToken(token.value)
     const redirect = router.currentRoute.value.query.redirect || '/'
     router.push(redirect)
   } catch (e) {
-    error.value = 'Неверный токен администратора'
+    error.value = e.message || 'Ошибка входа'
   } finally {
     loading.value = false
   }
@@ -66,7 +67,7 @@ async function login() {
 </script>
 
 <style scoped>
-.login-container {
+.auth-container {
   min-height: 80vh;
   display: flex;
   align-items: center;
@@ -74,7 +75,7 @@ async function login() {
   padding: 20px;
 }
 
-.login-card {
+.auth-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -84,7 +85,7 @@ async function login() {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.login-card h2 {
+.auth-card h2 {
   margin: 0 0 8px 0;
   color: var(--dark);
   font-size: 1.5rem;
@@ -134,7 +135,7 @@ async function login() {
   font-size: 0.9rem;
 }
 
-.btn-login {
+.btn-submit {
   width: 100%;
   padding: 14px;
   background: var(--primary);
@@ -147,14 +148,27 @@ async function login() {
   transition: all 0.2s;
 }
 
-.btn-login:hover:not(:disabled) {
+.btn-submit:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
 }
 
-.btn-login:disabled {
+.btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.switch-auth {
+  text-align: center;
+  margin-top: 16px;
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+.switch-auth a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .btn-back {
@@ -167,7 +181,6 @@ async function login() {
   font-size: 0.9rem;
   cursor: pointer;
   margin-top: 12px;
-  transition: all 0.2s;
 }
 
 .btn-back:hover {

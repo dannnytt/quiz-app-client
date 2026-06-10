@@ -427,17 +427,7 @@ body {
 }
 
 /* Explanation */
-.explanation {
-  margin-top: 20px;
-  padding: 16px 20px;
-  background: rgba(108, 92, 231, 0.05);
-  border-left: 3px solid var(--primary);
-  border-radius: 0 12px 12px 0;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--gray);
-  animation: fadeIn 0.4s ease;
-}
+
 
 /* Next Button */
 .next-btn-container {

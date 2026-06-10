@@ -9,39 +9,25 @@
         @error="handleImageError"
       />
     </div>
-
-    <!-- ✅ Кнопки для админа на кастомных квизах -->
-    <div class="card-actions" v-if="isCustom && isAdminUser" @click.stop>
-      <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
-        Аналитика
-      </button>
-      <button class="action-btn edit-btn" @click="editQuiz" title="Редактировать">
-        Изменить
-      </button>
-      <button class="action-btn delete-btn" @click="deleteQuiz" title="Удалить">
-        Удалить
-      </button>
-      <button class="action-btn online-btn" @click="createOnlineSession" title="Онлайн-игра">
-        Онлайн
-      </button>
+    
+    <!-- Кнопки для ВЛАДЕЛЬЦА квиза -->
+    <div class="card-actions" v-if="canManage && isCustom" @click.stop>
+      <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">Аналитика</button>
+      <button class="action-btn edit-btn" @click="editQuiz" title="Редактировать">Изменить</button>
+      <button class="action-btn delete-btn" @click="deleteQuiz" title="Удалить">Удалить</button>
+      <button class="action-btn online-btn" @click="createOnlineSession" title="Онлайн-игра">Онлайн</button>
     </div>
     
-    <!-- ✅ Кнопки для админа на обычных квизах -->
-    <div class="card-actions" v-else-if="isAdminUser" @click.stop>
-      <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">
-        Аналитика
-      </button>
-      <button class="action-btn online-btn" @click="createOnlineSession" title="Онлайн-игра">
-        Онлайн
-      </button>
+    <!-- Кнопки для ВЛАДЕЛЬЦА системного квиза (если вдруг) или просто Онлайн -->
+    <div class="card-actions" v-else-if="canManage" @click.stop>
+      <button class="action-btn analytics-btn" @click="viewAnalytics" title="Аналитика">Аналитика</button>
+      <button class="action-btn online-btn" @click="createOnlineSession" title="Онлайн-игра">Онлайн</button>
     </div>
     
-    <!-- ✅ Для обычных пользователей - только кнопка Играть -->
-    <!-- <div class="card-actions" v-else @click.stop>
-      <button class="action-btn play-btn" @click="startQuiz" title="Играть">
-        ▶ Играть
-      </button>
-    </div> -->
+    <!-- Для всех остальных — только Онлайн -->
+    <div class="card-actions" v-else @click.stop>
+      <button class="action-btn online-btn" @click="createOnlineSession" title="Онлайн-игра">Онлайн</button>
+    </div>
     
     <div class="card-top">
       <div>
@@ -53,6 +39,7 @@
     <div class="meta">
       <span class="difficulty" :class="quiz.difficulty">{{ getDifficultyLabel(quiz.difficulty) }}</span>
       <span>{{ quiz.questions?.length || 0 }} вопросов</span>
+      <span v-if="quiz.owner_nickname" class="owner"> {{ quiz.owner_nickname }}</span>
     </div>
   </div>
 </template>
@@ -62,9 +49,7 @@ import { defineProps, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
-import { getImageUrl, isAdmin } from '../api'
-
-const isAdminUser = computed(() => isAdmin())
+import { getImageUrl, isAuthenticated } from '../api'
 
 function handleImageError(e) {
   console.error('Failed to load image:', e.target.src)
@@ -84,12 +69,14 @@ const props = defineProps({
 
 const router = useRouter()
 
+// Может ли текущий пользователь управлять этим квизом
+const canManage = computed(() => {
+  if (!isAuthenticated() || !store.currentUser) return false
+  return props.quiz.owner_id === store.currentUser.id
+})
+
 function getDifficultyLabel(difficulty) {
   return DIFFICULTY_LABELS[difficulty] || difficulty
-}
-
-function getTimePerQuestion(quiz) {
-  return quiz.timePerQuestion || quiz.time_per_question || 30
 }
 
 const startQuiz = () => {
@@ -183,23 +170,7 @@ const deleteQuiz = async (event) => {
   backdrop-filter: blur(4px);
 }
 
-/* ✅ Стиль для кнопки "Играть" */
-.play-btn {
-  background: linear-gradient(135deg, var(--primary), var(--accent, #fd79a8));
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  font-size: 0.85rem;
-}
-
-.play-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(108, 92, 231, 0.3);
-}
-
-.card-top {
-  margin-bottom: 16px;
-}
+.card-top { margin-bottom: 16px; }
 
 .quiz-card h3 {
   font-size: 1.2rem;
@@ -232,6 +203,11 @@ const deleteQuiz = async (event) => {
 .difficulty.easy { background: rgba(0, 184, 148, 0.12); }
 .difficulty.medium { background: rgba(253, 203, 110, 0.15); }
 .difficulty.hard { background: rgba(225, 112, 85, 0.12); }
+
+.owner {
+  color: var(--primary);
+  font-weight: 600;
+}
 
 @media (max-width: 500px) {
   .card-actions {

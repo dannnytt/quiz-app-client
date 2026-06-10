@@ -14,19 +14,12 @@
       <div class="quiz-info">
         <button class="back-btn" @click="leaveSession">←</button>
         <div class="question-counter">
-          Вопрос <span>{{ currentQuestionIndex + 1 }}</span> / <span>{{ totalQuestions }}</span>
+          <span>{{ currentQuestionIndex + 1 }}</span> / <span>{{ totalQuestions }}</span>
         </div>
       </div>
       
       <div class="header-right">
-        <!-- <span class="current-nickname" :title="myNickname">
-          Ник: {{ myNickname || 'Игрок' }}
-        </span> -->
-        
-        <!-- <div class="role-badge" :class="isHost ? 'badge-host' : 'badge-player'">
-          {{ isHost ? 'Хост' : 'Игрок' }}
-        </div> -->
-        <div class="score-display"> Счет: {{ myScore }}</div>
+        <div class="score-display">★ {{ myScore }}</div>
       </div>
     </div>
 
@@ -34,6 +27,7 @@
       <div class="progress-bar" :style="{ width: progress + '%' }"></div>
     </div>
 
+    <!-- ХОСТ -->
     <div v-if="isHost && sessionStatus === 'active'" class="host-panel">
       <div class="question-preview">
         
@@ -50,23 +44,23 @@
         <div class="options-preview">
           <div v-for="(opt, i) in currentQuestion?.options" :key="i" class="option-preview">
             <span class="option-letter">{{ String.fromCharCode(65 + i) }}</span>
-            <span>{{ opt }}</span>
-            <span v-if="i === currentQuestion?.correct" class="correct-indicator">Правильный</span>
+            <span class="option-text">{{ opt }}</span>
+            <span v-if="i === currentQuestion?.correct" class="correct-indicator">✓</span>
           </div>
         </div>
       </div>
 
       <div class="host-controls">
         <div class="player-counter">
-          <span class="counter-icon"></span>
-          <span>Игроков: {{ players.length }}</span>
+          <span> Игроков: {{ players.length }}</span>
         </div>
         <button class="btn-next-host" @click="nextQuestionHost" :disabled="advancing">
-          {{ advancing ? 'Переход...' : (isLastQuestion ? 'Завершить игру' : 'Следующий вопрос') }}
+          {{ advancing ? 'Переход...' : (isLastQuestion ? 'Завершить игру' : 'Следующий вопрос →') }}
         </button>
       </div>
     </div>
 
+    <!-- ИГРОК -->
     <div v-else-if="!isHost && sessionStatus === 'active'" class="player-panel">
       <div class="question-container" ref="qContainer">
         
@@ -93,16 +87,14 @@
             :disabled="answered || !canAnswer"
           >
             <span class="option-letter">{{ String.fromCharCode(65 + i) }}</span>
-            <span>{{ opt }}</span>
+            <span class="option-text">{{ opt }}</span>
           </button>
         </div>
 
         <div v-if="answered" class="explanation">{{ currentQuestion?.explanation }}</div>
-        <div v-if="answered" class="waiting-next">
-          <p>Ответ принят! Ожидайте, пока хост нажмёт «Далее»...</p>
-        </div>
       </div>
 
+      <!-- Sidebar с таймером и лидербордом -->
       <div class="game-sidebar">
         <div v-if="!answered" :class="['timer-display', { warning: timeLeft <= 5 }]">
           ⏱ {{ timeLeft }}с
@@ -118,8 +110,8 @@
       </div>
     </div>
 
+    <!-- Ожидание -->
     <div v-if="sessionStatus === 'waiting'" class="waiting-start">
-      <div class="waiting-icon"></div>
       <p v-if="isHost">Нажмите «Начать игру» в лобби, чтобы запустить квиз.</p>
       <p v-else>Ожидайте начала игры...</p>
     </div>
@@ -129,10 +121,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '../api'
+import { api, getImageUrl } from '../api'
 import { store } from '../composables/useQuizStore'
 import { showToast } from '../composables/useToast'
-import { getImageUrl } from '../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -306,6 +297,7 @@ function selectAnswer(index) {
   
   submitAnswerToServer(index)
 }
+
 async function submitAnswerToServer(optionIndex) {
   try {
     const safeTimeLeft = Math.max(0, Math.min(timeLeft.value, quizTime.value))
@@ -321,7 +313,6 @@ async function submitAnswerToServer(optionIndex) {
     if (result?.correct) {
       const bonus = Math.round((safeTimeLeft / quizTime.value) * 50)
       showToast(`Верно! +${100 + bonus} очков`, 'success')
-      
       myScore.value = result.score
     } else {
       showToast('Неверно', 'error')
@@ -346,14 +337,11 @@ async function nextQuestionHost() {
         console.warn('Finish session error (continuing):', finishError)
         showToast('Игра завершена', 'warning')
       }
-      
       showFinalResults()
-      
     } else {
       await api.nextQuestion(sessionId.value)
       showToast('Следующий вопрос!', 'success')
     }
-    
   } catch (e) {
     console.error('Game progression failed:', e)
     if (isHost.value) {
@@ -376,79 +364,62 @@ function leaveSession() {
   router.push('/')
 }
 
+function handleImageError(e) {
+  console.error('Failed to load image:', e.target.src)
+  e.target.style.display = 'none'
+}
+
 onMounted(init)
 onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInterval) })
 </script>
 
 <style scoped>
-
-.question-image-container {
-  margin-bottom: 20px;
+.quiz-loading, .quiz-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
   text-align: center;
+  padding: 40px 20px;
+  color: var(--gray);
 }
-
-.question-image {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-
-.quiz-loading, .quiz-error { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; text-align: center; padding: 40px 20px; color: var(--gray); }
 .quiz-error { color: var(--danger); }
-.loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(108, 92, 231, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(108, 92, 231, 0.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.role-badge { padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; }
-.badge-host { border: 1px solid; }
-.badge-player { border: 1px solid; }
+/* === HEADER === */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
 
-.host-panel { max-width: 600px; margin: 30px auto; text-align: center; }
-.question-preview { background: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; text-align: left; border: 1px solid rgba(255,255,255,0.06); }
-.options-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-.option-preview { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
-.correct-indicator {
-  margin-left: auto;
-  padding: 4px 10px;
-  /* background: rgba(0, 184, 148, 0.15); */
-  border: 1px solid rgba(0, 184, 148, 0.4);
-  border-radius: 20px;
-  color: #00896b;
-  font-size: 0.8rem;
-  font-weight: 600;
+.quiz-info {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
 }
 
-.correct-indicator::before {
-  font-weight: 700;
+.question-counter {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--dark);
 }
-.host-controls { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.player-counter { display: flex; align-items: center; gap: 8px; color: var(--gray); font-size: 0.95rem; }
-.btn-next-host { width: 100%; max-width: 400px; padding: 16px; background: var(--primary); border: none; border-radius: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
-.btn-next-host:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3); }
-.btn-next-host:disabled { opacity: 0.6; cursor: not-allowed; }
-.host-hint { font-size: 0.85rem; color: var(--gray); margin-top: 8px; }
-
-.waiting-next { margin-top: 20px; padding: 16px; background: rgba(0, 184, 148, 0.1); border-radius: 12px; text-align: center; color: var(--success); }
-.game-sidebar { position: fixed; right: 20px; top: 100px; width: 200px; display: flex; flex-direction: column; gap: 15px; z-index: 10; }
-.mini-leaderboard { background: var(--card-bg); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.06); }
-.mini-leaderboard h4 { margin: 0 0 10px 0; font-size: 0.9rem; }
-.leader-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.leader-item:last-child { border-bottom: none; }
-.leader-item .rank { font-weight: 700; color: var(--primary); }
-.leader-item .name { flex: 1; margin: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.leader-item .score { font-weight: 600; }
-.waiting-start { text-align: center; padding: 60px 20px; color: var(--gray); }
-.waiting-icon { font-size: 3rem; margin-bottom: 16px; animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-@media (max-width: 768px) {
-  .game-sidebar { position: static; width: 100%; flex-direction: row; justify-content: space-between; margin: 20px 0; }
-  .options-preview { grid-template-columns: 1fr; }
-}
+.question-counter span { color: var(--primary); }
 
 .header-right {
   display: flex;
@@ -456,32 +427,364 @@ onUnmounted(() => { stopQuestionTimer(); if (pollInterval) clearInterval(pollInt
   gap: 10px;
 }
 
-.current-nickname {
+.score-display {
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
   font-weight: 600;
-  /* font-size: 0.85rem; */
-  color: #3b3a3a;
-  /* background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(253, 121, 168, 0.2)); */
-  /* border: 1px solid; */
-  padding: 6px 12px;
-  border-radius: 20px;
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
   white-space: nowrap;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
+/* === PROGRESS BAR === */
+.progress-container {
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.4s ease;
+}
+
+/* === BACK BUTTON === */
+.back-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* === MAIN LAYOUT: Grid с фиксированными зонами === */
+.player-panel {
+  display: grid;
+  grid-template-rows: 1fr auto; /* Вопрос занимает всё место, sidebar фиксирован */
+  height: calc(100vh - 120px); /* Вычитаем header + progress */
+  overflow: hidden;
+}
+
+/* === QUESTION AREA (скроллится внутри) === */
+.question-container {
+  padding: 20px 16px;
+  overflow-y: auto;
+  animation: slideIn 0.4s ease;
+  position: relative;
+}
+
+.question-image-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.question-image {
+  max-width: 100%;
+  max-height: 25vh;
+  object-fit: contain;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--card-bg2);
+}
+
+.question-text {
+  font-size: clamp(1.2rem, 5vw, 1.6rem);
+  font-weight: 700;
+  text-align: center;
+  color: var(--dark);
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+/* === OPTIONS === */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  min-height: 56px;
+}
+.option-btn:active:not(.disabled) { transform: scale(0.98); }
+
+.option-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--card-bg2);
+  font-weight: 800;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.option-btn.correct {
+  background: rgba(0, 184, 148, 0.12);
+  border-color: #00b894;
+  color: #00896b;
+}
+.option-btn.wrong {
+  background: rgba(225, 112, 85, 0.12);
+  border-color: #e17055;
+  color: #c0392b;
+}
+.option-btn.disabled {
+  opacity: 0.6;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* === EXPLANATION === */
+.explanation {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(108, 92, 231, 0.08);
+  border-radius: 14px;
+  border-left: 4px solid var(--primary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--dark);
+}
+
+/* === WAITING NEXT (overlay поверх вопроса, не двигает layout) === */
+.waiting-next {
+  position: absolute;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+  padding: 14px;
+  background: rgba(0, 184, 148, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  text-align: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 20px rgba(0, 184, 148, 0.3);
+  animation: slideUp 0.3s ease;
+  z-index: 5;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === GAME SIDEBAR (фиксирован внизу, не двигается) === */
+.game-sidebar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  gap: 12px;
+  /* Фиксированная высота — не меняется при появлении waiting-next */
+  min-height: 70px;
+  flex-shrink: 0;
+}
+
+.timer-display {
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: var(--card-bg2);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.timer-display.warning {
+  background: rgba(225, 112, 85, 0.15);
+  color: var(--danger);
+  border-color: rgba(225, 112, 85, 0.3);
+  animation: pulse-timer 1s infinite;
+}
+@keyframes pulse-timer { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+.mini-leaderboard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  max-width: 60%;
+}
+.mini-leaderboard h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--gray);
+  font-weight: 600;
+  display: none;
+}
+
+.leader-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--card-bg2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.leader-item .rank { color: var(--primary); font-weight: 800; }
+.leader-item .name { color: var(--dark); font-weight: 600; }
+.leader-item .score { font-weight: 700; color: var(--dark); }
+
+/* === HOST PANEL === */
+.host-panel {
+  padding: 20px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: calc(100vh - 120px);
+}
+
+.question-preview {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  flex: 1;
+}
+
+.options-preview {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.option-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark);
+  min-height: 56px;
+}
+
+.correct-indicator {
+  margin-left: auto;
+  padding: 4px 12px;
+  border: 1px solid rgba(0, 184, 148, 0.4);
+  border-radius: 20px;
+  color: #00b894;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(0, 184, 148, 0.1);
+}
+
+.host-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.player-counter {
+  text-align: center;
+  color: var(--gray);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.btn-next-host {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 56px;
+}
+.btn-next-host:active:not(:disabled) { transform: scale(0.98); }
+.btn-next-host:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* === WAITING START === */
+.waiting-start {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gray);
+}
+.waiting-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+/* === MOBILE === */
 @media (max-width: 600px) {
   .quiz-header {
-    flex-wrap: wrap;
-    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
   }
+  .quiz-info { justify-content: space-between; }
   .header-right {
-    width: 100%;
-    justify-content: flex-start;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
   }
-  .current-nickname {
-    order: -1;
+  .score-display {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  .question-text { margin-bottom: 18px; }
+  .option-btn, .option-preview { padding: 14px 16px; }
+  .explanation { padding: 14px; font-size: 0.9rem; }
+  .waiting-next {
+    left: 12px;
+    right: 12px;
+    bottom: 16px;
+    font-size: 0.85rem;
   }
 }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 </style>

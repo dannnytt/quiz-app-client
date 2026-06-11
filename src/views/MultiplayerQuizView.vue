@@ -19,7 +19,7 @@
       </div>
       
       <div class="header-right">
-        <div class="score-display">★ {{ myScore }}</div>
+        <div v-if="!isHost" class="score-display">★ {{ myScore }}</div>
       </div>
     </div>
 

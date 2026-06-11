@@ -3,12 +3,25 @@
   <div v-else-if="store.error" class="error">{{ store.error }}</div>
   
   <template v-else>
+    <!-- ✅ Блок пользователя (если авторизован) -->
+    <div v-if="isAuth" class="user-panel">
+      <div class="user-info">
+        <div class="user-avatar">
+          {{ store.currentUser?.nickname?.charAt(0).toUpperCase() || '?' }}
+        </div>
+        <div class="user-details">
+          <div class="user-name">{{ store.currentUser?.nickname }}</div>
+          <div class="user-email">{{ store.currentUser?.email }}</div>
+        </div>
+      </div>
+      <button class="logout-btn" @click="logout" title="Выйти из аккаунта">Выйти</button>
+    </div>
+
     <!-- Кнопки действий -->
     <div class="home-actions">
       <template v-if="isAuth">
         <button class="action-btn create-btn" @click="$router.push('/create')">Создать квиз</button>
         <button class="action-btn join-btn" @click="$router.push('/join')">Присоединиться по коду</button>
-        <button class="action-btn logout-btn" @click="logout">Выйти ({{ store.currentUser?.nickname }})</button>
       </template>
       <template v-else>
         <button class="action-btn join-btn" @click="$router.push('/join')">Присоединиться по коду</button>
@@ -51,10 +64,7 @@ const router = useRouter()
 
 const isAuth = computed(() => isAuthenticated())
 
-// Системные квизы — без владельца
 const systemQuizzes = computed(() => store.quizzes?.filter(q => !q.owner_id) || [])
-
-// Мои квизы — с владельцем = текущий пользователь
 const myQuizzes = computed(() => store.quizzes?.filter(q => q.owner_id === store.currentUser?.id) || [])
 
 function logout() {
@@ -67,6 +77,92 @@ function logout() {
 </script>
 
 <style scoped>
+/* === USER PANEL === */
+.user-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-email {
+  font-size: 0.85rem;
+  color: var(--gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.2);
+}
+
+.logout-icon {
+  font-size: 1.1rem;
+}
+
+/* === HOME ACTIONS === */
 .home-actions {
   display: flex;
   gap: 12px;
@@ -92,7 +188,7 @@ function logout() {
 
 .create-btn:hover {
   background: var(--primary-dark);
-  color: #fff;
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
 }
 
 .join-btn {
@@ -102,7 +198,7 @@ function logout() {
 
 .join-btn:hover {
   background: var(--primary-dark);
-  color: #fff;
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
 }
 
 .login-btn {
@@ -112,7 +208,7 @@ function logout() {
 
 .login-btn:hover {
   background: var(--primary-dark);
-  color: #fff;
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
 }
 
 .register-btn {
@@ -122,19 +218,10 @@ function logout() {
 
 .register-btn:hover {
   background: var(--primary-dark);
-  color: #fff;
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3);
 }
 
-.logout-btn {
-  background: var(--primary);
-  color: #fff;
-}
-
-.logout-btn:hover {
-  background: var(--primary-dark);
-  color: #fff;
-}
-
+/* === SECTION TITLE === */
 .section-title {
   font-size: 1.3rem;
   font-weight: 700;
@@ -142,15 +229,7 @@ function logout() {
   color: var(--dark);
 }
 
-/*
-.quiz-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-*/
-
+/* === LOADING/ERROR === */
 .loading, .error, .no-quizzes {
   text-align: center;
   padding: 40px;
@@ -166,9 +245,39 @@ function logout() {
 
 .error { color: var(--danger); }
 
+/* === MOBILE === */
 @media (max-width: 600px) {
+  .user-panel {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+  
+  .user-info {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+  
+  .user-name {
+    font-size: 1rem;
+  }
+  
+  .user-email {
+    font-size: 0.8rem;
+  }
+  
+  .logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
   .home-actions { flex-direction: column; }
   .action-btn { width: 100%; }
-  .quiz-grid { grid-template-columns: 1fr; }
 }
 </style>

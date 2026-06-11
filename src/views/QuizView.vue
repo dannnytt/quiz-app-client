@@ -90,7 +90,7 @@
               <span class="option-letter">{{ String.fromCharCode(65 + i) }}</span>
               <span class="option-text">{{ opt }}</span>
               <span v-if="answered && i === currentQ.correct" class="option-icon">✓</span>
-              <span v-else-if="answered && selected === i && i !== currentQ.correct" class="option-icon">✗</span>
+              <span v-else-if="answered && selected === i && i !== currentQ.correct" class="option-icon">x</span>
             </button>
           </div>
 
@@ -208,7 +208,7 @@ function timeUp() {
   answered.value = true
   wrongCount.value++
   stopTimers()
-  showToast('Время вышло!', 'error')
+  // showToast('Время вышло!', 'error')
 }
 
 function selectAnswer(index) {
@@ -225,10 +225,10 @@ function selectAnswer(index) {
     const timePerQ = quiz.value.timePerQuestion || quiz.value.time_per_question || 30
     const speedBonus = Math.round((timeLeft.value / timePerQ) * 50)
     score.value += 100 + speedBonus
-    showToast('Верно! +' + (100 + speedBonus), 'success')
+    // showToast('Верно! +' + (100 + speedBonus), 'success')
   } else {
     wrongCount.value++
-    showToast('Неверно', 'error')
+    // showToast('Неверно', 'error')
   }
 }
 
@@ -250,7 +250,7 @@ async function nextQuestion() {
       router.push('/results')
     } catch (e) {
       console.error('Failed to save result:', e)
-      showToast('Не удалось сохранить результат', 'error')
+      // showToast('Не удалось сохранить результат', 'error')
       router.push('/results')
     }
   } else {

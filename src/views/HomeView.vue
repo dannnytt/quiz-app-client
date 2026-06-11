@@ -17,12 +17,6 @@
       </template>
     </div>
 
-    <!-- Готовые квизы (системные, без владельца) -->
-    <div class="section-title">Готовые квизы</div>
-    <div class="quiz-grid">
-      <QuizCard v-for="q in systemQuizzes" :key="q.id" :quiz="q" />
-    </div>
-
     <!-- Мои квизы (только если авторизован) -->
     <template v-if="isAuth">
       <div class="section-title" v-if="myQuizzes.length">Мои квизы</div>
@@ -33,6 +27,12 @@
         <p>У вас пока нет своих квизов. <a @click="$router.push('/create')">Создайте первый!</a></p>
       </div>
     </template>
+
+    <!-- Готовые квизы (системные, без владельца) -->
+    <div class="section-title">Готовые квизы</div>
+    <div class="quiz-grid">
+      <QuizCard v-for="q in systemQuizzes" :key="q.id" :quiz="q" />
+    </div>
     
     <div v-if="!systemQuizzes.length && (!isAuth || !myQuizzes.length)" class="no-quizzes">
       <p>Квизов пока нет.</p>
